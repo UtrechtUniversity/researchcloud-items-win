@@ -50,8 +50,8 @@ Function Install-SDelete([String] $InstallPath) {
 
 Function SDelete {
     param (
-        [String] $InstallPath = "$env:USERPROFILE\sdelete",
         [String] $Path
+        [String] $InstallPath = "$env:USERPROFILE\sdelete",
     )
 
     if (Get-Command "sdelete.exe" -errorAction SilentlyContinue){
@@ -66,7 +66,9 @@ Function SDelete {
     Write-SRC-Log "Using SDelete to delete $Path"
 
     if ( $useDownloaded ) {
-       .\sdelete.exe -nobanner -p2 -c $Path
+        Push-Location -EA Stop $InstallPath
+        .\sdelete.exe -nobanner -p2 -c $Path
+        Pop-Location
     } else {
         sdelete.exe -nobanner -p2 -c $Path
     }
