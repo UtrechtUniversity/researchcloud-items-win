@@ -33,3 +33,10 @@ Function Add-To-Path {
         [Environment]::GetEnvironmentVariable("Path", $Target) + ";$NewSegment",
         $Target)
 }
+
+Function Convert-Newlines-LF([String] $File) {
+    # Convert CRLF to LF
+    # Add a trailing LF to the file
+    # https://stackoverflow.com/a/48919146
+    ((Get-Content $File) -join "`n") + "`n" | Set-Content -NoNewline $File
+}
