@@ -42,7 +42,7 @@ Function Main {
     }
     finally {
         Write-SRC-Log "Removing key from $SSH_KEY_LOCATION"
-        SDelete -Path $SSH_KEY_LOCATION
+        Secure-Delete -Path $SSH_KEY_LOCATION
     }
     Write-SRC-Log "Robot Copy complete"
 }

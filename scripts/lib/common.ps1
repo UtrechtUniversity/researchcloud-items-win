@@ -48,7 +48,7 @@ Function Install-SDelete([String] $InstallPath) {
     rm SDelete.zip
 }
 
-Function SDelete {
+Function Secure-Delete {
     param (
         [String] $Path,
         [String] $InstallPath = "$env:USERPROFILE\sdelete"
@@ -67,9 +67,9 @@ Function SDelete {
 
     if ( $useDownloaded ) {
         Push-Location -EA Stop $InstallPath
-        .\sdelete.exe -nobanner -q -p 2 -f $Path
+        .\sdelete.exe -nobanner -accepteula -q -p 2 -f $Path *>> $LOGFILE
         Pop-Location
     } else {
-        sdelete.exe -nobanner -q -p 2 -f $Path
+        sdelete.exe -nobanner -accepteula -q -p 2 -f $Path *>> $LOGFILE
     }
 }
