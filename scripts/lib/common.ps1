@@ -40,3 +40,34 @@ Function Convert-Newlines-LF([String] $File) {
     # https://stackoverflow.com/a/48919146
     ((Get-Content $File) -join "`n") + "`n" | Set-Content -NoNewline $File
 }
+
+Function Install-SDelete([String] $InstallPath) {
+    Write-SRC-Log "Installing SDelete"
+    Invoke-WebRequest https://download.sysinternals.com/files/SDelete.zip -OutFile SDelete.zip
+    Expand-Archive SDelete.zip -DestinationPath $InstallPath
+    rm SDelete.zip
+}
+
+Function SDelete {
+    param (
+        [String] $InstallPath = "$env:USERPROFILE\sdelete",
+        [String] $Path
+    )
+
+    if (Get-Command "sdelete.exe" -errorAction SilentlyContinue){
+        $useDownloaded = $false
+    } elseif (Test-Path "$InstallPath\sdelete.exe" -PathType Leaf) {
+        $useDownloaded = $true
+    } else {
+        Install-SDelete
+        $useDownloaded = $true
+    }
+
+    Write-SRC-Log "Using SDelete to delete $Path"
+
+    if ( $useDownloaded ) {
+       .\sdelete.exe -nobanner -p2 -c $Path
+    } else {
+        sdelete.exe -nobanner -p2 -c $Path
+    }
+}
