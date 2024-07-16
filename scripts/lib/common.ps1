@@ -67,9 +67,9 @@ Function SDelete {
 
     if ( $useDownloaded ) {
         Push-Location -EA Stop $InstallPath
-        .\sdelete.exe -nobanner -p2 -c $Path
+        .\sdelete.exe -nobanner -q -p 2 -f $Path
         Pop-Location
     } else {
-        sdelete.exe -nobanner -p2 -c $Path
+        sdelete.exe -nobanner -q -p 2 -f $Path
     }
 }
