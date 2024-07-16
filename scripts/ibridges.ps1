@@ -5,8 +5,8 @@ $GLOBAL_PIPX_HOME = "c:\pipx"
 $GLOBAL_PIPX_BIN = "c:\pipx\bin"
 $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-servers-uu.git"
 
-. $PSScriptRoot\lib\common.ps1m
-. $PSScriptRoot\lib\scoop.ps1m
+. $PSScriptRoot\lib\common.ps1
+. $PSScriptRoot\lib\scoop.ps1
 
 Function Install-Global-Pipx {
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_HOME"

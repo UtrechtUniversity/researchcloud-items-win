@@ -1,6 +1,6 @@
 $LOGFILE = "c:\logs\scoop.log"
 
-. $PSScriptRoot\lib\scoop.ps1m
+. $PSScriptRoot\lib\scoop.ps1
 
 Function Write-SRC-Log([String] $logText) {
     '{0:u}: {1}' -f (Get-Date), $logText | Out-File $LOGFILE -Append
