@@ -43,7 +43,7 @@ Function Convert-Newlines-LF([String] $File) {
 
 Function Install-SDelete([String] $InstallPath) {
     Write-SRC-Log "Installing SDelete"
-    Invoke-WebRequest https://download.sysinternals.com/files/SDelete.zip -OutFile SDelete.zip
+    Invoke-WebRequest 'https://download.sysinternals.com/files/SDelete.zip' -OutFile SDelete.zip
     Expand-Archive SDelete.zip -DestinationPath $InstallPath
     rm SDelete.zip
 }
@@ -59,7 +59,7 @@ Function SDelete {
     } elseif (Test-Path "$InstallPath\sdelete.exe" -PathType Leaf) {
         $useDownloaded = $true
     } else {
-        Install-SDelete
+        Install-SDelete $InstallPath
         $useDownloaded = $true
     }
 
