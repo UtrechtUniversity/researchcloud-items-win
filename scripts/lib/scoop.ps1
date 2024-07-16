@@ -10,7 +10,7 @@ Function Install-Scoop {
         }
         Else {
             Write-SRC-Log "Installing scoop"
-            Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile 'install_scoop.ps1'
             .\install_scoop.ps1 2> $LogFile
         }
