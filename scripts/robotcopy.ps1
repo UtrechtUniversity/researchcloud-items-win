@@ -1,5 +1,5 @@
 $LOGFILE = "c:\logs\robotcopy.log"
-$SSH_KEY_LOCATION = "$env:USERPROFILE\.ssh\id_rsa"
+$SSH_KEY_LOCATION = "$env:USERPROFILE\.robotcopy\id_rsa"
 $PACKAGES = "$env:USERPROFILE\robotpkgs"
 
 . $PSScriptRoot\lib\common.ps1
