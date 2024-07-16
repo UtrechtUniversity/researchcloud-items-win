@@ -9,14 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run PSScriptAnalyzer
-        uses: microsoft/psscriptanalyzer-action@v1.0
-        with:
-          path: .\
-          recurse: true 
-          enableExit: true
-          output: results.sarif
-      - name: Upload SARIF results file
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: results.sarif
+      - name: Run PSScriptAnalyzer on PowerShell Scripts
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path ./ -Recurse -EnableExit
