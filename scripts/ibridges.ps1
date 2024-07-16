@@ -8,7 +8,7 @@ $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-s
 . $PSScriptRoot\lib\common.ps1
 . $PSScriptRoot\lib\scoop.ps1
 
-Function Install-Global-Pipx {
+Function Install-Global-Pipx 
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_HOME"
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_BIN"
     Write-SRC-Log "Installing pipx"
@@ -20,7 +20,7 @@ Function Install-Global-Pipx {
 
 Function Main {
     Write-SRC-Log "Start iBridges installation"
-    try {
+    try, {
         Install-Scoop
         Install-Scoop-Package "git"
         Install-Scoop-Package "python"
