@@ -37,7 +37,7 @@ Function Main {
     catch {
         Write-SRC-Log "$_"
         Throw $_
-    }
+    
     Write-SRC-Log "iBridges installation completed succesfully"
 }
 
