@@ -28,11 +28,13 @@ Function Main {
         foreach ($pkg in $pkgs) {
             Write-SRC-Log "Installing $pkg"
             pipx install $pkg *>> $LOGFILE
-            $targetVenv = JoinPath "$GLOBAL_PIPX_HOME" "venvs" "$pkg" "Lib" "site-packages"
+            $targetVenv = "$GLOBAL_PIPX_HOME\venvs\$pkg\Lib\site-packages"
             pip install --target "$targetVenv" "$IBRIDGES_TEMPLATE_PLUGIN"
         }
-        $shortcutLocation = Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) -ChildPath 'iBridges.lnk'
-        New-Shortcut -Location $shortcutLocation -Target "$GLOBAL_PIPX_BIN\ibridges-gui.exe"
+        foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
+          $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
+          New-Shortcut -Location $shortcutLocation -Target "$GLOBAL_PIPX_BIN\ibridges-gui.exe"
+        }
     }
     catch {
         Write-SRC-Log "$_"
