@@ -1,4 +1,4 @@
-Import-Module "$PSScriptRoot\common.ps1m"
+Import-Module "$PSScriptRoot\common.ps1"
 
 Function Install-Scoop {
     param (
