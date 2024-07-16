@@ -12,7 +12,7 @@ Function Main {
             $varName = "robotcopy_$param"
             $val = [System.Environment]::GetEnvironmentVariable($varName)
             if (!$val) {
-                Write-SRC-Log "ERROR: manadatory ResearchCloud parameter $varName not defined."
+                Write-SRC-Log "ERROR: mandatory ResearchCloud parameter $varName not defined."
                 $allParamsPresent = $false
             }
             else {
@@ -42,7 +42,7 @@ Function Main {
     }
     finally {
         Write-SRC-Log "Removing key from $SSH_KEY_LOCATION"
-        #rm "$SSH_KEY_LOCATION"
+        rm "$SSH_KEY_LOCATION"
     }
     Write-SRC-Log "Robot Copy complete"
 }
