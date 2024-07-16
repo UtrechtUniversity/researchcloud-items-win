@@ -25,7 +25,7 @@ Function Write-SRC-Log {
 Function Add-To-Path {
     param (
         [String] $NewSegment,
-        [String] $Target = 'Machine',
+        [String] $Target = 'Machine'
     )
     Write-SRC-Log "Adding $NewSegment to PATH for $Target"
     [Environment]::SetEnvironmentVariable(
