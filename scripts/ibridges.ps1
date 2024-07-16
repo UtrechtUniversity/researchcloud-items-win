@@ -8,7 +8,7 @@ $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-s
 . $PSScriptRoot\lib\common.ps1m
 . $PSScriptRoot\lib\scoop.ps1m
 
-Function Install-Global-Pipx {
+Function Setup-Global-Pipx {
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_HOME"
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_BIN"
     Write-SRC-Log "Installing pipx"
