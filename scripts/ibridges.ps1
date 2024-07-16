@@ -15,6 +15,7 @@ Function Install-Global-Pipx {
     Install-Scoop-Package "pipx"
     [System.Environment]::SetEnvironmentVariable('PIPX_HOME', $GLOBAL_PIPX_HOME)
     [System.Environment]::SetEnvironmentVariable('PIPX_BIN_DIR', $GLOBAL_PIPX_BIN)
+    Add-To-Path -NewSegment "$GLOBAL_PIPX_BIN" -Target 'Machine'
 }
 
 Function Main {

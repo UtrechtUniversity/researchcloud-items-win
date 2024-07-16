@@ -21,3 +21,15 @@ Function Write-SRC-Log {
     )
     '{0:u}: {1}' -f (Get-Date), $LogText | Out-File $LogFile -Append
 }
+
+Function Add-To-Path {
+    param (
+        [String] $NewSegment,
+        [String] $Target = 'Machine',
+    )
+    Write-SRC-Log "Adding $NewSegment to PATH for $Target"
+    [Environment]::SetEnvironmentVariable(
+        "Path",
+        [Environment]::GetEnvironmentVariable("Path", $Target) + ";$NewSegment",
+        $Target)
+}
