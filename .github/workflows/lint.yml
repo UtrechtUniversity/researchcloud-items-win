@@ -1,0 +1,17 @@
+---
+name: PSScriptAnalyzer 
+
+on:
+  push:
+
+jobs:
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PSScriptAnalyzer
+        uses: microsoft/psscriptanalyzer-action@v1.0
+        with:
+          path: .\
+          recurse: true 
+          output: results.sarif
