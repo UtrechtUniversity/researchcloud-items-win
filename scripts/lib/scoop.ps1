@@ -2,7 +2,7 @@ Import-Module "$PSScriptRoot\common.ps1"
 
 Function Install-Scoop {
     param (
-        [String]$logFile = $LOGFILE
+        [String]$LogFile = $LOGFILE
     )
     try {
         if (Get-Command "scoop" -errorAction SilentlyContinue) {
@@ -12,7 +12,7 @@ Function Install-Scoop {
             Write-SRC-Log "Installing scoop"
             Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile 'install_scoop.ps1'
-            .\install_scoop.ps1 2> $logFile
+            .\install_scoop.ps1 2> $LogFile
         }
     }
     finally {
@@ -20,7 +20,11 @@ Function Install-Scoop {
     }
 }
 
-Function Install-Scoop-Package([String] $pkg) {
-    Write-SRC-Log ("Installing {0} via scoop" -f $pkg)
-    scoop install $pkg *>> $LOGFILE
+Function Install-Scoop-Package() {
+    param (
+        [String] $Pkg,
+        [String]$LogFile = $LOGFILE
+    )
+    Write-SRC-Log ("Installing {0} via scoop" -f $Pkg)
+    scoop install $Pkg *>> $LogFile
 }

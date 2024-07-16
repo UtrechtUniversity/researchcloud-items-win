@@ -16,8 +16,8 @@ Function New-Shortcut() {
 
 Function Write-SRC-Log {
     param (
-        [String]$logText,
-        [String]$logFile = $LOGFILE
+        [String]$LogText,
+        [String]$LogFile = $LOGFILE
     )
-    '{0:u}: {1}' -f (Get-Date), $logText | Out-File $logFile -Append
+    '{0:u}: {1}' -f (Get-Date), $LogText | Out-File $LogFile -Append
 }
