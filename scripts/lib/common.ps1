@@ -50,8 +50,8 @@ Function Install-SDelete([String] $InstallPath) {
 
 Function SDelete {
     param (
-        [String] $Path
-        [String] $InstallPath = "$env:USERPROFILE\sdelete",
+        [String] $Path,
+        [String] $InstallPath = "$env:USERPROFILE\sdelete"
     )
 
     if (Get-Command "sdelete.exe" -errorAction SilentlyContinue){
