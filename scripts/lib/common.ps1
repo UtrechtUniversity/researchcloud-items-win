@@ -1,15 +1,29 @@
 $LOGFILE = if ( $LOGFILE ) { $LOGFILE } else { 'C:\logs\common.log' }
+$ICONDIR = "$PSScriptRoot\..\..\imgs"
+$ICONDEST = "C:\src-misc\icons"
+
+Function Install-Icon([String]$Name) {
+    {
+        New-Item -ItemType Directory -Force -Path $ICONDEST
+        Copy-Item "$ICONDIR\$Name.ico" -Destination $ICONDEST
+    } | Out-Null
+    return "$ICONDEST\$Name.ico"
+}
 
 Function New-Shortcut() {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [String] $Location,
-        [String] $Target
+        [String] $Target,
+        [String] $IconName = ''
     )
     if($PSCmdlet.ShouldProcess($Location)){
         $WScriptShell = New-Object -ComObject WScript.Shell
         $Shortcut = $WScriptShell.CreateShortcut($Location)
         $Shortcut.TargetPath = $Target
+        if ( $IconName ) {
+            $Shortcut.IconLocation = Install-Icon($IconName)
+        }
         $Shortcut.Save()
     }
 }

@@ -6,13 +6,13 @@ $GLOBAL_PIPX_BIN = "c:\pipx\bin"
 $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-servers-uu.git"
 
 . $PSScriptRoot\lib\common.ps1
-. $PSScriptRoot\lib\scoop.ps1
+. $PSScriptRoot\lib\python.ps1
 
 Function Install-Global-Pipx {
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_HOME"
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_BIN"
     Write-SRC-Log "Installing pipx"
-    Install-Scoop-Package "pipx"
+    py -m pip install --user pipx
     [System.Environment]::SetEnvironmentVariable('PIPX_HOME', $GLOBAL_PIPX_HOME)
     [System.Environment]::SetEnvironmentVariable('PIPX_BIN_DIR', $GLOBAL_PIPX_BIN)
     Add-To-Path -NewSegment "$GLOBAL_PIPX_BIN" -Target 'Machine'
@@ -21,9 +21,7 @@ Function Install-Global-Pipx {
 Function Main {
     Write-SRC-Log "Start iBridges installation"
     try {
-        Install-Scoop
-        Install-Scoop-Package "git"
-        Install-Scoop-Package "python"
+        Install-Python
         Install-Global-Pipx
         $pkgs = "ibridges", "ibridgesgui"
         foreach ($pkg in $pkgs) {
@@ -34,7 +32,7 @@ Function Main {
         }
         foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
           $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
-          New-Shortcut -Location $shortcutLocation -Target "$GLOBAL_PIPX_BIN\ibridges-gui.exe"
+          New-Shortcut -Location $shortcutLocation -Target "$GLOBAL_PIPX_BIN\ibridges-gui.exe" -IconName 'ibridges'
         }
     }
     catch {
