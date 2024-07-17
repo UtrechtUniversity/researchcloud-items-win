@@ -3,7 +3,7 @@ $ICONDIR = "$PSScriptRoot\..\..\imgs"
 $ICONDEST = "C:\src-misc\icons"
 
 Function Install-Icon([String]$Name) {
-    {
+    . {
         New-Item -ItemType Directory -Force -Path $ICONDEST
         Copy-Item "$ICONDIR\$Name.ico" -Destination $ICONDEST
     } | Out-Null
