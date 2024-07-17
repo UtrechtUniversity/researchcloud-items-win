@@ -1,5 +1,3 @@
-Import-Module "$PSScriptRoot\common.ps1"
-
 Function Install-Scoop {
     param (
         [String]$LogFile = $LOGFILE
