@@ -48,7 +48,7 @@ Function Install-SDelete([String] $InstallPath) {
     rm SDelete.zip
 }
 
-Function Secure-Delete {
+Function SecureDelete {
     param (
         [String] $Path,
         [String] $InstallPath = "$env:USERPROFILE\sdelete"
