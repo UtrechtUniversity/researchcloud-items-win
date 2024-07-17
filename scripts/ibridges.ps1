@@ -6,13 +6,13 @@ $GLOBAL_PIPX_BIN = "c:\pipx\bin"
 $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-servers-uu.git"
 
 . $PSScriptRoot\lib\common.ps1
-. $PSScriptRoot\lib\python.ps1
+. $PSScriptRoot\lib\scoop.ps1
 
 Function Install-Global-Pipx {
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_HOME"
     New-Item -ItemType Directory -Force -Path "$GLOBAL_PIPX_BIN"
     Write-SRC-Log "Installing pipx"
-    py -m pip install --user pipx
+    Install-Scoop-Package "pipx"
     [System.Environment]::SetEnvironmentVariable('PIPX_HOME', $GLOBAL_PIPX_HOME)
     [System.Environment]::SetEnvironmentVariable('PIPX_BIN_DIR', $GLOBAL_PIPX_BIN)
     Add-To-Path -NewSegment "$GLOBAL_PIPX_BIN" -Target 'Machine'
@@ -21,7 +21,9 @@ Function Install-Global-Pipx {
 Function Main {
     Write-SRC-Log "Start iBridges installation"
     try {
-        Install-Python
+        Install-Scoop
+        Install-Scoop-Package "git"
+        Install-Scoop-Package "python"
         Install-Global-Pipx
         $pkgs = "ibridges", "ibridgesgui"
         foreach ($pkg in $pkgs) {
