@@ -1,7 +1,6 @@
+ . $PSScriptRoot\common.ps1
+
 Function Install-Scoop {
-    param (
-        [String]$LogFile = $LOGFILE
-    )
     try {
         if (Get-Command "scoop" -errorAction SilentlyContinue) {
             Write-SRC-Log "Scoop already installed"
@@ -9,8 +8,13 @@ Function Install-Scoop {
         Else {
             Write-SRC-Log "Installing scoop"
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
-            Invoke-RestMethod -Uri https://get.scoop.sh -Outfile 'install_scoop.ps1'
-            .\install_scoop.ps1 -RunAsAdmin 2>> $LogFile
+            $installerPath = "$env:USERPROFILE\install_scoop.ps1"
+            Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
+            RunRestricted "powershell.exe -c & $installerPath"
+            # Add scoop to PATH and then reload PATH
+            Add-To-Path "$env:USERPROFILE\scoop\shims" "User"
+            ReloadPath
+            Get-Command "scoop" -errorAction Stop
         }
     }
     finally {
@@ -24,5 +28,5 @@ Function Install-Scoop-Package() {
         [String]$LogFile = $LOGFILE
     )
     Write-SRC-Log ("Installing {0} via scoop" -f $Pkg)
-    scoop install $Pkg *>> $LogFile
+    RunRestricted "cmd.exe /c scoop install $Pkg"
 }
