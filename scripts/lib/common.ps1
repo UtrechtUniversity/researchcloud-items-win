@@ -1,6 +1,14 @@
-$LOGFILE = if ( $LOGFILE ) { $LOGFILE } else { 'C:\logs\common.log' }
+ $LOGFILE = if ( $LOGFILE ) { $LOGFILE } else { 'C:\logs\common.log' }
 $ICONDIR = "$PSScriptRoot\..\..\imgs"
 $ICONDEST = "C:\src-misc\icons"
+
+# Run a command with restricted privileges and wait for its execution to be completed
+Function RunRestricted() {
+    param (
+        [String] $MyCommand
+    )
+    Start-Process -NoNewWindow -Wait runas.exe "/trustlevel:0x20000 `"$MyCommand`""
+}
 
 Function Install-Icon([String]$Name) {
     . {
@@ -46,6 +54,10 @@ Function Add-To-Path {
         "Path",
         [Environment]::GetEnvironmentVariable("Path", $Target) + ";$NewSegment",
         $Target)
+}
+
+Function ReloadPath {
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
 
 Function Convert-Newlines-LF([String] $File) {
