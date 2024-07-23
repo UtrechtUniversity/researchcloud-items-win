@@ -10,7 +10,7 @@ Function Install-Scoop {
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
             $installerPath = "$env:USERPROFILE\install_scoop.ps1"
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-            RunRestricted "powershell.exe -c & $installerPath"
+            Invoke-Restricted "powershell.exe -c & $installerPath"
             # Add scoop to PATH and then reload PATH
             Add-To-Path "$env:USERPROFILE\scoop\shims" "User"
             ReloadPath
@@ -28,5 +28,5 @@ Function Install-Scoop-Package() {
         [String]$LogFile = $LOGFILE
     )
     Write-SRC-Log ("Installing {0} via scoop" -f $Pkg)
-    RunRestricted "cmd.exe /c scoop install $Pkg"
+    Invoke-Restricted "cmd.exe /c scoop install $Pkg"
 }

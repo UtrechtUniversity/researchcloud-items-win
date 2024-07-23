@@ -1,13 +1,16 @@
- $LOGFILE = if ( $LOGFILE ) { $LOGFILE } else { 'C:\logs\common.log' }
+$LOGFILE = if ( $LOGFILE ) { $LOGFILE } else { 'C:\logs\common.log' }
 $ICONDIR = "$PSScriptRoot\..\..\imgs"
 $ICONDEST = "C:\src-misc\icons"
 
 # Run a command with restricted privileges and wait for its execution to be completed
-Function RunRestricted() {
+Function Invoke-Restricted() {
     param (
         [String] $MyCommand
     )
-    Start-Process -NoNewWindow -Wait runas.exe "/trustlevel:0x20000 `"$MyCommand`""
+    $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe "/trustlevel:0x20000 `"$MyCommand`""
+    if ($result.ExitCode) {
+        throw "Attempted to run '$MyCommand' with restricted privileges, but it exited with statuscode $($result.ExitCode)"
+    }
 }
 
 Function Install-Icon([String]$Name) {
