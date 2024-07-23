@@ -70,13 +70,6 @@ Function Convert-Newlines-LF([String] $File) {
     ((Get-Content $File) -join "`n") + "`n" | Set-Content -NoNewline $File
 }
 
-Function Install-SDelete([String] $InstallPath) {
-    Write-SRC-Log "Installing SDelete"
-    Invoke-WebRequest 'https://download.sysinternals.com/files/SDelete.zip' -OutFile SDelete.zip
-    Expand-Archive SDelete.zip -DestinationPath $InstallPath
-    rm SDelete.zip
-}
-
 Function SecureDelete {
     param (
         [String] $Path,
@@ -88,7 +81,10 @@ Function SecureDelete {
     } elseif (Test-Path "$InstallPath\sdelete.exe" -PathType Leaf) {
         $useDownloaded = $true
     } else {
-        Install-SDelete $InstallPath
+        Write-SRC-Log "Installing SDelete"
+        Invoke-WebRequest 'https://download.sysinternals.com/files/SDelete.zip' -OutFile SDelete.zip
+        Expand-Archive SDelete.zip -DestinationPath $InstallPath
+        rm SDelete.zip
         $useDownloaded = $true
     }
 
