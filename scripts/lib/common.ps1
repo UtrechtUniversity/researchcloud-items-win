@@ -98,3 +98,21 @@ Function SecureDelete {
         sdelete.exe -nobanner -accepteula -q -p 2 -f $Path *>> $LOGFILE
     }
 }
+
+# Mount a remote share to $Drive using SSHFS
+# Assumes sshfs-ws and winfsp are already installed
+Function Mount-SSHFS {
+    param (
+        [String]$Server,
+        [String]$User,
+        [String]$Port,
+        [String]$Path,
+        [String]$Drive
+    )
+    $serverUNC = "\\sshfs.kr\$User@$Server!$Port$Path"
+    Write-SRC-Log "Connecting to $serverUNC"
+    $cmdOutput = (net use $Drive "$serverUNC" 2>&1) -join "`n"
+    if ($LASTEXITCODE -ne 0) {
+        throw $cmdOutput
+    }
+}
