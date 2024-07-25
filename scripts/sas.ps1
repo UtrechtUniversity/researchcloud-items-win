@@ -1,15 +1,16 @@
-$LOGFILE = "c:\logs\robotcopy.log"
-$SSH_KEY_LOCATION = "$env:USERPROFILE\.robotcopy\id_rsa"
-$PACKAGES = "$env:USERPROFILE\robotpkgs"
+$LOGFILE = "c:\logs\sas.log"
+$SSH_KEY_LOCATION = "$env:USERPROFILE\.ssh\id_rsa"
+$MOUNT_DRIVE = "S:" # Target drive to mount the robotserver on
 
 . $PSScriptRoot\lib\common.ps1
+. $PSScriptRoot\lib\scoop.ps1
 
 Function Main {
-    Write-SRC-Log "Start Robot Copy"
+    Write-SRC-Log "Start SAS"
     try {
         $allParamsPresent = $true
         foreach ($param in 'sshkey', 'host', 'port', 'user', 'path') {
-            $varName = "robotcopy_$param"
+            $varName = "robotmount_$param"
             $val = [System.Environment]::GetEnvironmentVariable($varName)
             if (!$val) {
                 Write-SRC-Log "ERROR: mandatory ResearchCloud parameter $varName not defined."
@@ -26,29 +27,37 @@ Function Main {
 
         Write-SRC-Log "Saving key to $SSH_KEY_LOCATION"
         New-Item -ItemType Directory -Force -Path (Split-Path -parent $SSH_KEY_LOCATION)
-        $robotcopy_sshkey | Out-File $SSH_KEY_LOCATION -encoding ascii
+        $robotmount_sshkey | Out-File $SSH_KEY_LOCATION -encoding ascii
         Convert-Newlines-LF $SSH_KEY_LOCATION
 
-        New-Item -ItemType Directory -Force -Path $PACKAGES
-        $copyTarget = "$PACKAGES\$(Split-Path -Leaf $robotcopy_path)"
+        Install-Scoop
+        Install-Scoop-Bucket "nonportable"
+        Install-Scoop-Package "nonportable/winfsp-np"
+        Install-Scoop-Package "nonportable/sshfs-np"
 
-        Write-SRC-Log "Attempting to copy $robotcopy_path from $robotcopy_host on port $robotcopy_port as user $robotcopy_user to $copyTarget"
-        $scpSource = "${robotcopy_user}@${robotcopy_host}:${robotcopy_path}"
-        scp -o StrictHostKeyChecking=no -i $SSH_KEY_LOCATION -P "$robotcopy_port" $scpSource "$copyTarget" *>> $LOGFILE
+        $mountPath = $robotmount_path -replace '/','\'
+        Mount-SSHFS -Server $robotmount_host -User $robotmount_user -Port $robotmount_port -Path $mountPath -Drive $MOUNT_DRIVE
     }
     catch {
-        Write-SRC-Log "$_"
+        $CAUGHT = $true
+        Write-SRC-Log $_
         Throw $_
     }
     finally {
-        Write-SRC-Log "Removing key from $SSH_KEY_LOCATION"
+        $ErrorActionPreference = 'Continue'
+
+        Write-SRC-Log "Trying to unmount robot server"
+        net use /delete $MOUNT_DRIVE
+
         SecureDelete -Path $SSH_KEY_LOCATION
+        Write-SRC-Log "Removing key from $SSH_KEY_LOCATION"
         if ($CAUGHT) {
             Exit 1
         }
     }
-    Write-SRC-Log "Robot Copy complete"
+    Write-SRC-Log "SAS component complete"
 }
 
 Write-Output "Logging to $LOGFILE"
 Main
+
