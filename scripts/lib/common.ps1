@@ -116,3 +116,20 @@ Function Mount-SSHFS {
         throw $cmdOutput
     }
 }
+
+Function Initialize-SRC-Param {
+    param (
+        [String[]] $ReqParams,
+        [String] $Prefix = ""
+    )
+    foreach ($param in $ReqParams) {
+        $varName = "$prefix$param"
+        $val = [System.Environment]::GetEnvironmentVariable($varName)
+        if (!$val) {
+            Throw "ERROR: mandatory ResearchCloud parameter $varName not defined."
+        }
+        else {
+            New-Variable -Name $varName -Value $val -Scope 1
+        }
+    }
+}

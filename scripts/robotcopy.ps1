@@ -7,23 +7,8 @@ $PACKAGES = "$env:USERPROFILE\robotpkgs"
 Function Main {
     Write-SRC-Log "Start Robot Copy"
     try {
-        $allParamsPresent = $true
-        foreach ($param in 'sshkey', 'host', 'port', 'user', 'path') {
-            $varName = "robotcopy_$param"
-            $val = [System.Environment]::GetEnvironmentVariable($varName)
-            if (!$val) {
-                Write-SRC-Log "ERROR: mandatory ResearchCloud parameter $varName not defined."
-                $allParamsPresent = $false
-            }
-            else {
-                New-Variable -Name $varName -Value $val
-            }
-        }
 
-        if (!$allParamsPresent) {
-            Exit 1
-        }
-
+        Initialize-SRC-Param 'sshkey', 'host', 'port', 'user', 'path' -Prefix 'robotcopy_'
         Write-SRC-Log "Saving key to $SSH_KEY_LOCATION"
         New-Item -ItemType Directory -Force -Path (Split-Path -parent $SSH_KEY_LOCATION)
         $robotcopy_sshkey | Out-File $SSH_KEY_LOCATION -encoding ascii

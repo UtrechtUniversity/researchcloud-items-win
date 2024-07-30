@@ -8,26 +8,11 @@ $MOUNT_DRIVE = "S:" # Target drive to mount the robotserver on
 Function Main {
     Write-SRC-Log "Start SAS"
     try {
-        $allParamsPresent = $true
-        foreach ($param in 'sshkey', 'host', 'port', 'user', 'path') {
-            $varName = "robotmount_$param"
-            $val = [System.Environment]::GetEnvironmentVariable($varName)
-            if (!$val) {
-                Write-SRC-Log "ERROR: mandatory ResearchCloud parameter $varName not defined."
-                $allParamsPresent = $false
-            }
-            else {
-                New-Variable -Name $varName -Value $val
-            }
-        }
-
-        if (!$allParamsPresent) {
-            Exit 1
-        }
+        Initialize-SRC-Param 'sshkey', 'host', 'port', 'user', 'path' -Prefix 'sas_mount_'
 
         Write-SRC-Log "Saving key to $SSH_KEY_LOCATION"
         New-Item -ItemType Directory -Force -Path (Split-Path -parent $SSH_KEY_LOCATION)
-        $robotmount_sshkey | Out-File $SSH_KEY_LOCATION -encoding ascii
+        $sas_mount_sshkey | Out-File $SSH_KEY_LOCATION -encoding ascii
         Convert-Newlines-LF $SSH_KEY_LOCATION
 
         Install-Scoop
@@ -35,8 +20,8 @@ Function Main {
         Install-Scoop-Package "nonportable/winfsp-np"
         Install-Scoop-Package "nonportable/sshfs-np"
 
-        $mountPath = $robotmount_path -replace '/','\'
-        Mount-SSHFS -Server $robotmount_host -User $robotmount_user -Port $robotmount_port -Path $mountPath -Drive $MOUNT_DRIVE
+        $mountPath = $sas_mount_path -replace '/','\'
+        Mount-SSHFS -Server $sas_mount_host -User $sas_mount_user -Port $sas_mount_port -Path $mountPath -Drive $MOUNT_DRIVE
     }
     catch {
         $CAUGHT = $true
