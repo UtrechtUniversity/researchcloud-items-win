@@ -1,14 +1,34 @@
+$ErrorActionPreference = 'Stop'
+
 $LOGFILE = "c:\logs\sas.log"
 $SSH_KEY_LOCATION = "$env:USERPROFILE\.ssh\id_rsa"
 $MOUNT_DRIVE = "S:" # Target drive to mount the robotserver on
+$DEFAULT_RESPONSEFILE = 'base.properties'
 
 . $PSScriptRoot\lib\common.ps1
 . $PSScriptRoot\lib\scoop.ps1
+
+Function Install-SAS {
+    param (
+      [String] $ResponseFile
+    )
+    $sasPath = "$MOUNT_DRIVE\SAS"
+    $responseFilePath = "$sasPath\$ResponseFile"
+    Write-SRC-Log "Installing SAS with responsefile $responseFilePath ..."
+    if (!(Test-Path $responseFilePath -PathType Leaf)) {
+        Throw "$responseFilePath could not be found."
+    }
+
+    Push-Location -EA Stop $sasPath
+    .\setup.exe -quiet -responsefile "$sasPath\$responseFilePath" *>> $LOGFILE
+    Pop-Location
+}
 
 Function Main {
     Write-SRC-Log "Start SAS"
     try {
         Initialize-SRC-Param 'sshkey', 'host', 'port', 'user', 'path' -Prefix 'sas_mount_'
+        $responseFile = if ($env:sas_responsefile) { $env:sas_responsefile } else { $DEFAULT_RESPONSEFILE };
 
         Write-SRC-Log "Saving key to $SSH_KEY_LOCATION"
         New-Item -ItemType Directory -Force -Path (Split-Path -parent $SSH_KEY_LOCATION)
@@ -22,6 +42,8 @@ Function Main {
 
         $mountPath = $sas_mount_path -replace '/','\'
         Mount-SSHFS -Server $sas_mount_host -User $sas_mount_user -Port $sas_mount_port -Path $mountPath -Drive $MOUNT_DRIVE
+
+        Install-SAS -ResponseFile $responseFile
     }
     catch {
         $CAUGHT = $true
@@ -45,4 +67,3 @@ Function Main {
 
 Write-Output "Logging to $LOGFILE"
 Main
-
