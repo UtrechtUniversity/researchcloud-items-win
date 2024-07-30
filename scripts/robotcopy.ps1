@@ -37,7 +37,8 @@ Function Main {
         scp -o StrictHostKeyChecking=no -i $SSH_KEY_LOCATION -P "$robotcopy_port" $scpSource "$copyTarget" *>> $LOGFILE
     }
     catch {
-        Write-SRC-Log "$_"
+        $CAUGHT = $true
+        Write-SRC-Log $_
         Throw $_
     }
     finally {
