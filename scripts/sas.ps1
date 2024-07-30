@@ -19,9 +19,10 @@ Function Install-SAS {
         Throw "$responseFilePath could not be found."
     }
 
-    Push-Location -EA Stop $sasPath
-    .\setup.exe -quiet -responsefile "$sasPath\$responseFilePath" *>> $LOGFILE
-    Pop-Location
+    $result = Start-Process -PassThru -NoNewWindow -Wait -FilePath "$sasPath\setup.exe" -ArgumentList '-quiet', '-responsefile', $responseFilePath
+    if ($result.ExitCode) {
+        throw "SAS setup.exe exited with statuscode $($result.ExitCode)"
+    }
 }
 
 Function Main {
