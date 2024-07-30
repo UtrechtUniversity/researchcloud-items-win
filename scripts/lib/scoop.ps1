@@ -30,3 +30,11 @@ Function Install-Scoop-Package() {
     Write-SRC-Log ("Installing {0} via scoop" -f $Pkg)
     Invoke-Restricted "cmd.exe /c scoop install $Pkg"
 }
+
+Function Install-Scoop-Bucket() {
+    param (
+        [String] $Bucket
+    )
+    Write-SRC-Log ("Installing scoop bucket {0}" -f $Bucket)
+    scoop bucket add $Bucket
+}
