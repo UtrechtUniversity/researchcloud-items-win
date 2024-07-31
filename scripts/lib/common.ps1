@@ -44,6 +44,7 @@ Function Write-SRC-Log {
         [String]$LogText,
         [String]$LogFile = $LOGFILE
     )
+    Write-Output $LogText
     '{0:u}: {1}' -f (Get-Date), $LogText | Out-File $LogFile -Append
 }
 
