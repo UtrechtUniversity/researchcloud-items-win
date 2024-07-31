@@ -109,6 +109,9 @@ Function Mount-SSHFS {
         [String]$Path,
         [String]$Drive
     )
+    if (Get-Volume -FilePath "$Drive\") {
+        throw 'Drive $Drive is already mounted, exiting.'
+    }
     $serverUNC = "\\sshfs.kr\$User@$Server!$Port$Path"
     Write-SRC-Log "Connecting to $serverUNC"
     $cmdOutput = (net use $Drive "$serverUNC" 2>&1) -join "`n"

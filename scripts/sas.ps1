@@ -53,10 +53,10 @@ Function Main {
     }
     finally {
         $ErrorActionPreference = 'Continue'
-
-        Write-SRC-Log "Trying to unmount robot server"
-        net use /delete $MOUNT_DRIVE
-
+        if (Get-Volume -FilePath "$MOUNT_DRIVE\") {
+            Write-SRC-Log "Unmounting robot server"
+            net use /delete $MOUNT_DRIVE
+        }
         SecureDelete -Path $SSH_KEY_LOCATION
         Write-SRC-Log "Removing key from $SSH_KEY_LOCATION"
         if ($CAUGHT) {
