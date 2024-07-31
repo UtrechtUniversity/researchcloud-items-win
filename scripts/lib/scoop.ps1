@@ -11,6 +11,8 @@ Function Install-Scoop {
             $installerPath = "$env:USERPROFILE\install_scoop.ps1"
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
             Invoke-Restricted "powershell.exe -c & $installerPath"
+            ls "$env:USERPROFILE\scoop" | Write-Output
+            ls "$env:USERPROFILE\scoop\shims" | Write-Output
             # Add scoop to PATH and then reload PATH
             Add-To-Path "$env:USERPROFILE\scoop\shims" "User"
             Write-SRC-Log "Path = $env:PATH"
