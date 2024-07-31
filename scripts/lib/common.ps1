@@ -53,13 +53,13 @@ Function Add-To-Path {
         [String] $NewSegment,
         [String] $Target = 'Machine'
     )
-    Write-SRC-Log "$Target path = " + [Environment]::GetEnvironmentVariable("Path", $Target)
+    Write-SRC-Log "$Target path $([Environment]::GetEnvironmentVariable("Path", $Target))"
     Write-SRC-Log "Adding $NewSegment to PATH for $Target"
     [Environment]::SetEnvironmentVariable(
         "Path",
         [Environment]::GetEnvironmentVariable("Path", $Target) + ";$NewSegment",
         $Target)
-    Write-SRC-Log "$Target path = " + [Environment]::GetEnvironmentVariable("Path", $Target)
+    Write-SRC-Log "$Target path = $([Environment]::GetEnvironmentVariable("Path", $Target))"
 }
 
 Function ReloadPath {

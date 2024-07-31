@@ -13,9 +13,9 @@ Function Install-Scoop {
             Invoke-Restricted "powershell.exe -c & $installerPath"
             # Add scoop to PATH and then reload PATH
             Add-To-Path "$env:USERPROFILE\scoop\shims" "User"
-            Write-SRC-Log "Path = " + $env:PATH
+            Write-SRC-Log "Path = $env:PATH"
             ReloadPath
-            Write-SRC-Log "Path = " $env:PATH
+            Write-SRC-Log "Path = $env:PATH" 
         }
     }
     finally {
