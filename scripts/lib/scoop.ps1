@@ -9,15 +9,13 @@ Function Install-Scoop {
             Write-SRC-Log "Installing scoop"
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
             $installerPath = "$env:USERPROFILE\install_scoop.ps1"
+            $scoopPath = "$env:USERPROFILE\scoop"
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-            Invoke-Restricted "powershell.exe -c & $installerPath"
-            ls "$env:USERPROFILE\scoop" | Write-Output
-            ls "$env:USERPROFILE\scoop\shims" | Write-Output
+            Invoke-Restricted "powershell.exe -c & $installerPath -ScoopDir $scoopPath"
+            ls $scoopPath | Write-Output
             # Add scoop to PATH and then reload PATH
-            Add-To-Path "$env:USERPROFILE\scoop\shims" "User"
-            Write-SRC-Log "Path = $env:PATH"
+            Add-To-Path "$scoopPath\shims" "User"
             ReloadPath
-            Write-SRC-Log "Path = $env:PATH" 
         }
     }
     finally {
