@@ -12,11 +12,12 @@ Function Install-Scoop {
             $installerPath = "$env:USERPROFILE\install_scoop.ps1"
             $scoopPath = "$env:USERPROFILE\scoop"
             $scoopInstallLog = "$env:USERPROFILE\scoop.log"
-            $installCmd = "powershell.exe & `"$installerPath`" | Out-File `"$scoopInstallLog`""
+            $installCmd = "powershell.exe & `"$installerPath`" *>> `"$scoopInstallLog`""
 
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
             Invoke-Restricted $installCmd
-            Get-Content -LiteralPath $scoopInstallLog | Write-SRC-Log
+            $result = Get-Content -LiteralPath $scoopInstallLog
+            Write-SRC-Log $result
 
             # Add scoop to PATH and then reload PATH
             Add-To-Path "$scoopPath\shims" "User"
