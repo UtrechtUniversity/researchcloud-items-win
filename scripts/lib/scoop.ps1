@@ -8,10 +8,16 @@ Function Install-Scoop {
         Else {
             Write-SRC-Log "Installing scoop"
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
+
             $installerPath = "$env:USERPROFILE\install_scoop.ps1"
             $scoopPath = "$env:USERPROFILE\scoop"
+            $scoopInstallLog = "$env:USERPROFILE\scoop.log"
+            $installCmd = "powershell.exe & `"$installerPath`" | Out-File `"$scoopInstallLog`""
+
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-            Invoke-Restricted "powershell.exe -c & $installerPath -ScoopDir $scoopPath -RunAsAdmin"
+            Invoke-Restricted $installCmd
+            Get-Content -LiteralPath $scoopInstallLog | Write-SRC-Log
+
             # Add scoop to PATH and then reload PATH
             Add-To-Path "$scoopPath\shims" "User"
             ReloadPath

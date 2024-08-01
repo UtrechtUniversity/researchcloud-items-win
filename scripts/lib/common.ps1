@@ -7,9 +7,9 @@ Function Invoke-Restricted() {
     param (
         [String] $MyCommand
     )
-    $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe "/trustlevel:0x20000 `"$MyCommand`""
-    Write-SRC-Log $result.StandardOutput
-    Write-SRC-Log $result.StandardError
+    $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe @"
+/trustlevel:0x20000 "$MyCommand"
+"@
     if ($result.ExitCode) {
         throw "Attempted to run '$MyCommand' with restricted privileges, but it exited with statuscode $($result.ExitCode)"
     }
