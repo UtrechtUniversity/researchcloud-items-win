@@ -1,18 +1,19 @@
  . $PSScriptRoot\common.ps1
 
 Function Install-Scoop {
-    try {
-        if (Get-Command "scoop" -errorAction SilentlyContinue) {
-            Write-SRC-Log "Scoop already installed"
-        }
-        Else {
-            Write-SRC-Log "Installing scoop"
-            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
+    if (Get-Command "scoop" -errorAction SilentlyContinue) {
+        Write-SRC-Log "Scoop already installed"
+    }
+    Else {
+        Write-SRC-Log "Installing scoop"
 
-            $installerPath = "$env:USERPROFILE\install_scoop.ps1"
-            $scoopPath = "$env:USERPROFILE\scoop"
-            $scoopInstallLog = "$env:USERPROFILE\scoop.log"
-            $installCmd = "powershell.exe & `"$installerPath`" *>> `"$scoopInstallLog`""
+        $installerPath = "$env:USERPROFILE\install_scoop.ps1"
+        $scoopPath = "$env:USERPROFILE\scoop"
+        $scoopInstallLog = "$env:USERPROFILE\scoop.log"
+        $installCmd = "powershell.exe & `"$installerPath`" *>> `"$scoopInstallLog`""
+
+        try {
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
 
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
             Invoke-Restricted $installCmd
@@ -26,9 +27,9 @@ Function Install-Scoop {
             Add-To-Path "$scoopPath\shims" "User"
             ReloadPath
         }
-    }
-    finally {
-        Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser # Reset the execution policy
+        finally {
+            Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser # Reset the execution policy
+        }
     }
 }
 
