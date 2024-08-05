@@ -28,6 +28,7 @@ Function Install-Scoop {
         # Add scoop to PATH and then reload PATH
         Add-To-Path "$scoopPath\shims" "User"
         ReloadPath
+    }
 }
 
 Function Install-Scoop-Package() {
