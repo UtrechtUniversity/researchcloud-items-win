@@ -16,7 +16,7 @@ Function Install-Scoop {
         try {
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
 
-            Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
+            #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
 
             Push-Location -EA Stop $env:USERPROFILE
             Invoke-Restricted $installCmd
