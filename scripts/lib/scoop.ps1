@@ -18,18 +18,20 @@ Function Install-Scoop {
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
             Invoke-Restricted $installCmd
             $result = Get-Content -LiteralPath $scoopInstallLog
-            ForEach ($line in $($result -split "`r`n"))
-            {
-                Write-SRC-Log "Scoop installer: $line"
-            }
-
-            # Add scoop to PATH and then reload PATH
-            Add-To-Path "$scoopPath\shims" "User"
-            ReloadPath
+            Write-Error $result
         }
         finally {
+            if ($result) {
+                ForEach ($line in $($result -split "`r`n"))
+                {
+                    Write-SRC-Log "Scoop installer: $line"
+                }
+            }
             Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser # Reset the execution policy
         }
+        # Add scoop to PATH and then reload PATH
+        Add-To-Path "$scoopPath\shims" "User"
+        ReloadPath
     }
 }
 
