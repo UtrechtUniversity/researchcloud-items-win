@@ -17,7 +17,10 @@ Function Install-Scoop {
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
             Invoke-Restricted $installCmd
             $result = Get-Content -LiteralPath $scoopInstallLog
-            Write-SRC-Log $result
+            ForEach ($line in $($result -split "`r`n"))
+            {
+                Write-SRC-Log "Scoop installer: $result"
+            }
 
             # Add scoop to PATH and then reload PATH
             Add-To-Path "$scoopPath\shims" "User"
