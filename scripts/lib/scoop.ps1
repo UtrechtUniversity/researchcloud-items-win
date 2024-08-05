@@ -7,7 +7,8 @@ Function Install-Scoop {
     Else {
         Write-SRC-Log "Installing scoop"
 
-        $installerPath = "$env:USERPROFILE\install_scoop.ps1"
+        #$installerPath = "$env:USERPROFILE\install_scoop.ps1"
+        $installerPath = "$PSScriptRoot\install_scoop.ps1"
         $scoopPath = "$env:USERPROFILE\scoop"
         $scoopInstallLog = "$env:USERPROFILE\scoop.log"
         $installCmd = "powershell.exe & `"$installerPath`" *>> `"$scoopInstallLog`""
@@ -18,11 +19,10 @@ Function Install-Scoop {
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
 
             Push-Location -EA Stop $env:USERPROFILE
-            Invoke-Restricted $PSScriptRoot\install_scoop.ps1
+            Invoke-Restricted $installCmd
             Pop-Location
 
             $result = Get-Content -LiteralPath $scoopInstallLog
-            Write-Error $result
         }
         finally {
             if ($result) {
