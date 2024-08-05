@@ -94,15 +94,8 @@ function Deny-Install {
         [Int] $errorCode = 1
     )
 
-    Write-InstallInfo -String $message -ForegroundColor DarkRed
+    Write-InstallInfo $message
     Write-InstallInfo 'Abort.'
-
-    # Don't abort if invoked with iex that would close the PS session
-    if ($IS_EXECUTED_FROM_IEX) {
-        break
-    } else {
-        exit $errorCode
-    }
 }
 
 function Test-ValidateParameter {
@@ -566,6 +559,8 @@ function Install-Scoop {
     # Enable TLS 1.2
     Optimize-SecurityProtocol
     Write-InstallInfo 'Optimized security protocol'
+
+    exit 1
 
     # Download scoop from GitHub
     Write-InstallInfo 'Downloading...'
