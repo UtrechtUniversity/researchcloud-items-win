@@ -16,7 +16,11 @@ Function Install-Scoop {
             Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
 
             Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-            Invoke-Restricted $installCmd
+
+            Push-Location -EA Stop $env:USERPROFILE
+            Invoke-Restricted $PSScriptRoot\install_scoop.ps1
+            Pop-Location
+
             $result = Get-Content -LiteralPath $scoopInstallLog
             Write-Error $result
         }

@@ -11,6 +11,7 @@ Function Main {
         Write-SRC-Log "$_"
         Throw $_
     }
+    Get-Command 'scoop' -ErrorAction 'Stop'
     Write-SRC-Log "scoop installation completed succesfully"
 }
 
