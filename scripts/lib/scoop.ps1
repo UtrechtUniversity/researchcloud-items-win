@@ -11,32 +11,23 @@ Function Install-Scoop {
         $installerPath = "$PSScriptRoot\install_scoop.ps1"
         $scoopPath = "$env:USERPROFILE\scoop"
         $scoopInstallLog = "$env:USERPROFILE\scoop.log"
-        $installCmd = "powershell.exe & `"$installerPath`" *>> `"$scoopInstallLog`""
+        $installCmd = "powershell.exe Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; & `"$installerPath`" *>> `"$scoopInstallLog`""
 
-        try {
-            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
+        #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
 
-            #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
+        Invoke-Restricted $installCmd
 
-            Push-Location -EA Stop $env:USERPROFILE
-            Invoke-Restricted $installCmd
-            Pop-Location
-
-            $result = Get-Content -LiteralPath $scoopInstallLog
-        }
-        finally {
-            if ($result) {
-                ForEach ($line in $($result -split "`r`n"))
-                {
-                    Write-SRC-Log "Scoop installer: $line"
-                }
+        $result = Get-Content -LiteralPath $scoopInstallLog
+        if ($result) {
+            ForEach ($line in $($result -split "`r`n"))
+            {
+                Write-SRC-Log "Scoop installer: $line"
             }
-            Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser # Reset the execution policy
         }
+
         # Add scoop to PATH and then reload PATH
         Add-To-Path "$scoopPath\shims" "User"
         ReloadPath
-    }
 }
 
 Function Install-Scoop-Package() {
