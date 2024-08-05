@@ -19,7 +19,7 @@ Function Install-Scoop {
             $result = Get-Content -LiteralPath $scoopInstallLog
             ForEach ($line in $($result -split "`r`n"))
             {
-                Write-SRC-Log "Scoop installer: $result"
+                Write-SRC-Log "Scoop installer: $line"
             }
 
             # Add scoop to PATH and then reload PATH
