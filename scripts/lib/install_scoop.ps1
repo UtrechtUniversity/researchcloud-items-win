@@ -136,8 +136,8 @@ function Test-Prerequisite {
     }
 
     Write-InstallInfo "4"
-
-    Write-InstallInfo (Get-ExecutionPolicy).ToString()
+    $exec = (Get-ExecutionPolicy).ToString()
+    Write-InstallInfo "Exec policy: $exec"
 
     # Show notification to change execution policy
     $allowedExecutionPolicy = @('Unrestricted', 'RemoteSigned', 'ByPass')
