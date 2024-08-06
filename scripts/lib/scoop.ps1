@@ -14,7 +14,8 @@ Function Install-Scoop {
         $installCmd = "powershell.exe -ExecutionPolicy ByPass -c & `"$installerPath`" *>> `"$scoopInstallLog`""
 
         #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-
+        Invoke-Restricted "powershell.exe -c Get-ExecutionPolicy | Out-File `"$scoopInstallLog`""
+        Invoke-Restricted "powershell.exe -ExecutionPolicy ByPass -c Get-ExecutionPolicy | Out-File `"$scoopInstallLog`""
         Invoke-Restricted $installCmd
 
         $result = Get-Content -LiteralPath $scoopInstallLog

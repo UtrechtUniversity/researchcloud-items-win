@@ -137,8 +137,7 @@ function Test-Prerequisite {
 
     Write-InstallInfo "4"
     Write-InstallInfo "Getting exec policy"
-    $exec = (Get-ExecutionPolicy)
-    echo $exec
+    echo Get-ExecutionPolicy
     Write-InstallInfo "Exec policy: $exec"
     Write-InstallInfo "Exec policy str: $($exec.ToString())"
 
