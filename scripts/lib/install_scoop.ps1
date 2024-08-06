@@ -136,10 +136,18 @@ function Test-Prerequisite {
     }
 
     Write-InstallInfo "4"
+    Write-InstallInfo "Getting function"
+    if (Get-Command 'Get-ExecutionPolicy' -errorAction SilentlyContinue) {
+        Write-InstallInfo 'Get-ExecutionPolicy exists'
+    } else {
+        Write-InstallInfo 'Get-ExecutionPolicy does not exist'
+    }
+
     Write-InstallInfo "Getting exec policy"
-    echo Get-ExecutionPolicy
+    $exec = Get-ExecutionPolicy
+    $execstr = (Get-ExecutionPolicy).ToString()
     Write-InstallInfo "Exec policy: $exec"
-    Write-InstallInfo "Exec policy str: $($exec.ToString())"
+    Write-InstallInfo "Exec policy str: $execstr"
 
     # Show notification to change execution policy
     $allowedExecutionPolicy = @('Unrestricted', 'RemoteSigned', 'ByPass')
