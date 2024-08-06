@@ -8,23 +8,13 @@ Function Install-Scoop {
         Write-SRC-Log "Installing scoop"
 
         #$installerPath = "$env:USERPROFILE\install_scoop.ps1"
-        $installerPath = "$PSScriptRoot\install_scoop.ps1"
+        $installerPath = "$PSScriptRoot\debug.ps1"
         $scoopPath = "$env:USERPROFILE\scoop"
         $scoopInstallLog = "$env:USERPROFILE\scoop.log"
-        $exec = Get-ExecutionPolicy -Scope CurrentUser
-        Set-ExecutionPolicy Bypass -Scope CurrentUser -Force
         $installCmd = "powershell.exe -ExecutionPolicy Bypass -c & `"$installerPath`" *>> `"$scoopInstallLog`""
 
         #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-        Invoke-Restricted "powershell.exe -c 'Echo get command' | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -c Get-Command 'Get-ExecutionPolicy' | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -c Get-Module 'Microsoft.PowerShell.Security' | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -c  cat C:\Windows\system32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1 | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -c 'Echo exec policy' | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -ExecutionPolicy ByPass -c Get-ExecutionPolicy | Out-File `"$scoopInstallLog`""
         Invoke-Restricted $installCmd
-
-        Set-ExecutionPolicy $exec -Scope CurrentUser -Force
 
         $result = Get-Content -LiteralPath $scoopInstallLog
         if ($result) {
