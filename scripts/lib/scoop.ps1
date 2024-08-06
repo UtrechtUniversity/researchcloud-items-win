@@ -7,11 +7,12 @@ Function Install-Scoop {
     Else {
         Write-SRC-Log "Installing scoop"
 
-        #$installerPath = "$env:USERPROFILE\install_scoop.ps1"
-        $installerPath = "$PSScriptRoot\debug.ps1"
+        $installerPath = "$env:USERPROFILE\install_scoop.ps1"
+        #$installerPath = "$PSScriptRoot\debug.ps1"
         $scoopPath = "$env:USERPROFILE\scoop"
         $scoopInstallLog = "$env:USERPROFILE\scoop.log"
-        $installCmd = "powershell.exe -ExecutionPolicy Bypass -c & `"$installerPath`" *>> `"$scoopInstallLog`""
+        $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted
+        $installCmd = "$pwshPath -ExecutionPolicy Bypass -c & `"$installerPath`" *>> `"$scoopInstallLog`""
 
         #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
         Invoke-Restricted $installCmd
