@@ -11,7 +11,7 @@ Function Install-Scoop {
         $installerPath = "$PSScriptRoot\install_scoop.ps1"
         $scoopPath = "$env:USERPROFILE\scoop"
         $scoopInstallLog = "$env:USERPROFILE\scoop.log"
-        $installCmd = "powershell.exe Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; & `"$installerPath`" *>> `"$scoopInstallLog`""
+        $installCmd = "powershell.exe -ExecutionPolicy Bypass -c & `"$installerPath`" *>> `"$scoopInstallLog`""
 
         #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
 
