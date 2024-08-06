@@ -7,7 +7,7 @@ Function Invoke-Restricted() {
     param (
         [String] $MyCommand
     )
-    $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe @"
+    $result = Start-Process -LoadUserProfile -PassThru -NoNewWindow -Wait runas.exe @"
 /trustlevel:0x20000 "$MyCommand"
 "@
     if ($result.ExitCode) {

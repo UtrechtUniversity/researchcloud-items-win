@@ -18,9 +18,9 @@ Function Install-Scoop {
         #Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
         Invoke-Restricted "powershell.exe -c 'Echo get command' | Out-File -Append `"$scoopInstallLog`""
         Invoke-Restricted "powershell.exe -c Get-Command 'Get-ExecutionPolicy' | Out-File -Append `"$scoopInstallLog`""
+        Invoke-Restricted "powershell.exe -c Get-Module 'Microsoft.PowerShell.Security' | Out-File -Append `"$scoopInstallLog`""
+        Invoke-Restricted "powershell.exe -c  cat C:\Windows\system32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1 | Out-File -Append `"$scoopInstallLog`""
         Invoke-Restricted "powershell.exe -c 'Echo exec policy' | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -c Get-ExecutionPolicy | Out-File -Append `"$scoopInstallLog`""
-        Invoke-Restricted "powershell.exe -c 'Echo with bypass' | Out-File -Append `"$scoopInstallLog`""
         Invoke-Restricted "powershell.exe -ExecutionPolicy ByPass -c Get-ExecutionPolicy | Out-File `"$scoopInstallLog`""
         Invoke-Restricted $installCmd
 
