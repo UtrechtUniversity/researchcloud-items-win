@@ -7,10 +7,40 @@ Function Invoke-Restricted() {
     param (
         [String] $MyCommand
     )
-    $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe "/trustlevel:0x20000 `"$MyCommand`""
+
+    Write-SRC-Log "Command to be run in restricted mode: $MyCommand"
+    $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe @"
+/trustlevel:0x20000 "$MyCommand"
+"@
+
+    $stdout = $p.StandardOutput
+    if ($stdout) {
+        Write-SRC-Log "$MyCommand captured stdout: $($stdout.ReadToEnd())"
+    }
+    $stderr = $p.StandardError
+    if ($stderr) {
+        Write-SRC-Log "$MyCommand captured stderr: $($stderr.ReadToEnd())"
+    }
+
     if ($result.ExitCode) {
         throw "Attempted to run '$MyCommand' with restricted privileges, but it exited with statuscode $($result.ExitCode)"
     }
+}
+
+# Run a PS script with restricted privileges and wait for its execution to be completed
+Function Invoke-Restricted-PS-Script() {
+    param (
+        [String] $ScriptPath,
+        [String] $LogPath = ''
+    )
+
+    $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted.
+    $setModulePath = "`$env:PSModulePath='$env:PSModulePath'" # Ensure that pwsh in the 'runas' context loads the same modules as the shell executing this script
+    $runCommand = "$pwshPath -ExecutionPolicy Bypass -c $setModulePath; & `"$ScriptPath`""
+    if ( $LogPath ) {
+         $runCommand = "$runCommand *>> `"$LogPath`""
+    }
+    Invoke-Restricted($runCommand)
 }
 
 Function Install-Icon([String]$Name) {

@@ -1,24 +1,33 @@
  . $PSScriptRoot\common.ps1
 
 Function Install-Scoop {
-    try {
-        if (Get-Command "scoop" -errorAction SilentlyContinue) {
-            Write-SRC-Log "Scoop already installed"
-        }
-        Else {
-            Write-SRC-Log "Installing scoop"
-            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser
-            $installerPath = "$env:USERPROFILE\install_scoop.ps1"
-            Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
-            Invoke-Restricted "powershell.exe -c & $installerPath"
-            # Add scoop to PATH and then reload PATH
-            Add-To-Path "$env:USERPROFILE\scoop\shims" "User"
-            ReloadPath
-            Get-Command "scoop" -errorAction Stop
-        }
+    if (Get-Command "scoop" -errorAction SilentlyContinue) {
+        Write-SRC-Log "Scoop already installed"
     }
-    finally {
-        Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser # Reset the execution policy
+    Else {
+        Write-SRC-Log "Installing scoop"
+
+        $installerPath = "$env:USERPROFILE\install_scoop.ps1"
+        $scoopPath = "$env:USERPROFILE\scoop"
+        $scoopInstallLog = "$env:USERPROFILE\scoop.log"
+
+        Invoke-RestMethod -Uri https://get.scoop.sh -Outfile $installerPath
+
+        Invoke-Restricted-PS-Script $installerPath $scoopInstallLog
+
+        $result = Get-Content -LiteralPath $scoopInstallLog
+        if ($result) {
+            ForEach ($line in $($result -split "`r`n"))
+            {
+                Write-SRC-Log "Scoop installer: $line"
+            }
+        }
+
+        Get-Command 'scoop' -ErrorAction 'Stop'
+
+        # Add scoop to PATH and then reload PATH
+        Add-To-Path "$scoopPath\shims" "User"
+        ReloadPath
     }
 }
 
@@ -36,5 +45,5 @@ Function Install-Scoop-Bucket() {
         [String] $Bucket
     )
     Write-SRC-Log ("Installing scoop bucket {0}" -f $Bucket)
-    scoop bucket add $Bucket
+    Invoke-Restricted "cmd.exe /c scoop bucket add $Bucket"
 }
