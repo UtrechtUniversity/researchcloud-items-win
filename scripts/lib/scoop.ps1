@@ -23,11 +23,10 @@ Function Install-Scoop {
             }
         }
 
-        Get-Command 'scoop' -ErrorAction 'Stop'
-
         # Add scoop to PATH and then reload PATH
         Add-To-Path "$scoopPath\shims" "User"
         ReloadPath
+        Get-Command 'scoop' -ErrorAction 'Stop'
     }
 }
 
