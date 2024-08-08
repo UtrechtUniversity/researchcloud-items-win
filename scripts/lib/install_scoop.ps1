@@ -563,6 +563,9 @@ function Test-CommandAvailable {
 }
 
 function Install-Scoop {
+    echo $PSVersionTable
+    echo $env:PSModulePath -split ';'
+
     Write-InstallInfo 'Initializing...'
     # Validate install parameters
     Test-ValidateParameter
