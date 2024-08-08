@@ -35,7 +35,8 @@ Function Invoke-Restricted-PS-Script() {
     )
 
     $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted.
-    $runCommand = "$pwshPath -ExecutionPolicy Bypass -c { `$env:PSModulePath=`"$env:PSModulePath`" && & `"$ScriptPath`" }"
+    $setModulePath = "`$env:PSModulePath='$env:PSModulePath'" # Ensure that pwsh in the 'runas' context loads the same modules as the shell executing this script
+    $runCommand = "$pwshPath -ExecutionPolicy Bypass -c $setModulePath; & `"$ScriptPath`""
     if ( $LogPath ) {
          $runCommand = "$runCommand *>> `"$LogPath`""
     }
