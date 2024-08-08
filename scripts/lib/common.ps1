@@ -25,7 +25,7 @@ Function Invoke-Restricted-PS-Script() {
     $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted
     $runCommand = "$pwshPath -ExecutionPolicy Bypass -c & `"$ScriptPath`""
     if ( $LogPath ) {
-         $runCommand = "$installCmd *>> `"$LogPath`""
+         $runCommand = "$runCommand *>> `"$LogPath`""
     }
     Write-SRC-Log "Command to be run in restricted mode: $runCommand"
     Invoke-Restricted($runCommand)
