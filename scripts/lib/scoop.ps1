@@ -43,5 +43,5 @@ Function Install-Scoop-Bucket() {
         [String] $Bucket
     )
     Write-SRC-Log ("Installing scoop bucket {0}" -f $Bucket)
-    scoop bucket add $Bucket
+    Invoke-Restricted "cmd.exe /c scoop bucket add $Bucket"
 }
