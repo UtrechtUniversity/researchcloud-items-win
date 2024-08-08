@@ -574,8 +574,6 @@ function Install-Scoop {
     Optimize-SecurityProtocol
     Write-InstallInfo 'Optimized security protocol'
 
-    exit 1
-
     # Download scoop from GitHub
     Write-InstallInfo 'Downloading...'
     $downloader = Get-Downloader
