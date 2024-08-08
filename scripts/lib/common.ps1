@@ -7,9 +7,12 @@ Function Invoke-Restricted() {
     param (
         [String] $MyCommand
     )
+
+    Write-SRC-Log "Command to be run in restricted mode: $MyCommand"
     $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe @"
 /trustlevel:0x20000 "$MyCommand"
 "@
+
     $stdout = $p.StandardOutput
     if ($stdout) {
         Write-SRC-Log "$MyCommand captured stdout: $($stdout.ReadToEnd())"
@@ -32,12 +35,11 @@ Function Invoke-Restricted-PS-Script() {
     )
 
     $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted.
-    $setModulePath = "`$env:PSModulePath='$env:PSModulePath'" # Get the current module path to ensure pwsh in the 'runas' context is run with the same modules as this script.
+    $setModulePath = "`$env:PSModulePath=`"$env:PSModulePath`"" # Get the current module path to ensure pwsh in the 'runas' context is run with the same modules as this script.
     $runCommand = "$pwshPath -ExecutionPolicy Bypass -c { $setModulePath; & `"$ScriptPath`" }"
     if ( $LogPath ) {
          $runCommand = "$runCommand *>> `"$LogPath`""
     }
-    Write-SRC-Log "Command to be run in restricted mode: $runCommand"
     Invoke-Restricted($runCommand)
 }
 
