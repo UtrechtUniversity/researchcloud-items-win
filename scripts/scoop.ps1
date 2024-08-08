@@ -14,4 +14,6 @@ Function Main {
     Write-SRC-Log "scoop installation completed succesfully"
 }
 
+
+Write-Output "Logging to $LOGFILE"
 Main
