@@ -10,6 +10,15 @@ Function Invoke-Restricted() {
     $result = Start-Process -PassThru -NoNewWindow -Wait runas.exe @"
 /trustlevel:0x20000 "$MyCommand"
 "@
+    $stdout = $p.StandardOutput
+    if ($stdout) {
+        Write-SRC-Log "$MyCommand captured stdout: $($stdout.ReadToEnd())"
+    }
+    $stderr = $p.StandardError
+    if ($stderr) {
+        Write-SRC-Log "$MyCommand captured stderr: $($stderr.ReadToEnd())"
+    }
+
     if ($result.ExitCode) {
         throw "Attempted to run '$MyCommand' with restricted privileges, but it exited with statuscode $($result.ExitCode)"
     }
