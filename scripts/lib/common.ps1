@@ -15,6 +15,22 @@ Function Invoke-Restricted() {
     }
 }
 
+# Run a PS script with restricted privileges and wait for its execution to be completed
+Function Invoke-Restricted-PS-Script() {
+    param (
+        [String] $ScriptPath,
+        [String] $LogPath = ''
+    )
+
+    $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted
+    $runCommand = "$pwshPath -ExecutionPolicy Bypass -c & `"$ScriptPath`""
+    if ( $LogPath ) {
+         $runCommand = "$installCmd *>> `"$LogPath`""
+    }
+    Write-SRC-Log "Command to be run in restricted mode: $runCommand"
+    Invoke-Restricted($runCommand)
+}
+
 Function Install-Icon([String]$Name) {
     . {
         New-Item -ItemType Directory -Force -Path $ICONDEST
