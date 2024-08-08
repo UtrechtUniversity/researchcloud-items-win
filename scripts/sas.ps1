@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 $LOGFILE = "c:\logs\sas.log"
 $SSH_KEY_LOCATION = "$env:USERPROFILE\.ssh\id_rsa"
 $MOUNT_DRIVE = "S:" # Target drive to mount the robotserver on
-$DEFAULT_RESPONSEFILE = 'base.properties'
+$DEFAULT_RESPONSEFILE = 'min.properties'
 
 . $PSScriptRoot\lib\common.ps1
 . $PSScriptRoot\lib\scoop.ps1
