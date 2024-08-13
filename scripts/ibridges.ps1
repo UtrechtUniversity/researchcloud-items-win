@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $LOGFILE = "c:\logs\ibridges.log"
+$PYTHON_VERSION = "3.12.5"
 $GLOBAL_PIPX_HOME = "c:\pipx"
 $GLOBAL_PIPX_BIN = "c:\pipx\bin"
 $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-servers-uu.git"
@@ -23,7 +24,7 @@ Function Main {
     try {
         Install-Scoop
         Install-Scoop-Package "git"
-        Install-Scoop-Package "python"
+        Install-Scoop-Package "python@$PYTHON_VERSION"
         Install-Global-Pipx
         $pkgs = "ibridges", "ibridgesgui"
         foreach ($pkg in $pkgs) {
