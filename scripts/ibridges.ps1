@@ -31,7 +31,7 @@ Function Main {
             Write-SRC-Log "Installing $pkg"
             pipx install $pkg *>> $LOGFILE
             $targetVenv = "$GLOBAL_PIPX_HOME\venvs\$pkg\Lib\site-packages"
-            pip install --target "$targetVenv" "$IBRIDGES_TEMPLATE_PLUGIN"
+            python3 -m pip install --target "$targetVenv" "$IBRIDGES_TEMPLATE_PLUGIN"
         }
         foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
           $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
