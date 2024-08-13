@@ -38,8 +38,8 @@ Function Main {
 
         Install-Scoop
         Install-Scoop-Bucket "nonportable"
-        Install-Scoop-Package "nonportable/winfsp-np"
-        Install-Scoop-Package "nonportable/sshfs-np"
+        Install-Scoop-Package "nonportable/winfsp-np" -RunAsAdmin
+        Install-Scoop-Package "nonportable/sshfs-np" -RunAsAdmin
 
         $mountPath = $sas_mount_path -replace '/','\'
         Mount-SSHFS -Server $sas_mount_host -User $sas_mount_user -Port $sas_mount_port -Path $mountPath -Drive $MOUNT_DRIVE
