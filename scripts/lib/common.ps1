@@ -69,6 +69,32 @@ Function New-Shortcut() {
     }
 }
 
+Function Write-File-To-Log {
+    param (
+        [String]$LogPath,
+        [String]$Prefix = "",
+        [Switch]$Clear
+    )
+
+    if ($Prefix) {
+        $linePrefix = $Prefix
+    } else {
+        $linePrefix = $LogPath
+    }
+
+    $result = Get-Content -LiteralPath $LogPath -EA 'Continue'
+
+    if ($result) {
+        ForEach ($line in $($result -split "`r`n"))
+        {
+            Write-SRC-Log "$($linePrefix): $line"
+        }
+        if ($Clear) {
+            Clear-Content -Path $LogPath -Force
+        }
+    }
+}
+
 Function Write-SRC-Log {
     param (
         [String]$LogText,
@@ -83,15 +109,15 @@ Function Add-To-Path {
         [String] $NewSegment,
         [String] $Target = 'Machine'
     )
-    Write-SRC-Log "Adding $NewSegment to PATH for $Target"
     [Environment]::SetEnvironmentVariable(
         "Path",
         [Environment]::GetEnvironmentVariable("Path", $Target) + ";$NewSegment",
         $Target)
 }
 
-Function ReloadPath {
+Function Update-Path {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    Write-SRC-Log "Set PATH to $env:Path"
 }
 
 Function Convert-Newlines-LF([String] $File) {

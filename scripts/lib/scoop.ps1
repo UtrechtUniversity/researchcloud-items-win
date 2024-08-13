@@ -1,4 +1,4 @@
- . $PSScriptRoot\common.ps1
+. $PSScriptRoot\common.ps1
 
 Function Install-Scoop {
     if (Get-Command "scoop" -errorAction SilentlyContinue) {
@@ -15,17 +15,11 @@ Function Install-Scoop {
 
         Invoke-Restricted-PS-Script $installerPath $scoopInstallLog
 
-        $result = Get-Content -LiteralPath $scoopInstallLog
-        if ($result) {
-            ForEach ($line in $($result -split "`r`n"))
-            {
-                Write-SRC-Log "Scoop installer: $line"
-            }
-        }
+        Write-File-To-Log $scoopInstallLog -Clear
 
         # Add scoop to PATH and then reload PATH
         Add-To-Path "$scoopPath\shims" "User"
-        ReloadPath
+        Update-Path
         Get-Command 'scoop' -ErrorAction 'Stop'
     }
 }
@@ -33,10 +27,18 @@ Function Install-Scoop {
 Function Install-Scoop-Package() {
     param (
         [String] $Pkg,
-        [String]$LogFile = $LOGFILE
+        [Switch] $RunAsAdmin
     )
     Write-SRC-Log ("Installing {0} via scoop" -f $Pkg)
-    Invoke-Restricted "cmd.exe /c scoop install $Pkg"
+
+    $scoopInstallLog = "$env:USERPROFILE\scoop_installer.log"
+    if ($RunAsAdmin) {
+        scoop install $Pkg *> $scoopInstallLog
+    } else {
+        Invoke-Restricted "cmd.exe /c scoop install $Pkg > $scoopInstallLog 2>&1"
+    }
+    Write-File-To-Log $scoopInstallLog -Clear
+    Update-Path
 }
 
 Function Install-Scoop-Bucket() {
@@ -44,5 +46,5 @@ Function Install-Scoop-Bucket() {
         [String] $Bucket
     )
     Write-SRC-Log ("Installing scoop bucket {0}" -f $Bucket)
-    Invoke-Restricted "cmd.exe /c scoop bucket add $Bucket"
+    scoop bucket add $Bucket
 }
