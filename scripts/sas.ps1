@@ -37,6 +37,7 @@ Function Main {
         Convert-Newlines-LF $SSH_KEY_LOCATION
 
         Install-Scoop
+        Install-Scoop-Package "git" -RunAsAdmin
         Install-Scoop-Bucket "nonportable"
         Install-Scoop-Package "nonportable/winfsp-np" -RunAsAdmin
         Install-Scoop-Package "nonportable/sshfs-np" -RunAsAdmin
