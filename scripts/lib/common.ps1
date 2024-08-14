@@ -2,7 +2,28 @@ $LOGFILE = if ( $LOGFILE ) { $LOGFILE } else { 'C:\logs\common.log' }
 $ICONDIR = "$PSScriptRoot\..\..\imgs"
 $ICONDEST = "C:\src-misc\icons"
 
-# Run a command with restricted privileges and wait for its execution to be completed
+<#
+.SYNOPSIS
+Run a command with normal user privileges.
+
+.DESCRIPTION
+Uses runas.exe to run an arbitrary command with normal user privileges.
+Useful since ResearchCloud components are executed with admin privileges, and this may raise security issues in some cases.
+Note that we cannot directly redirect output from the command to a powershell variable.
+If you wish to capture the output of the command, redirect it to a file and use the Write-File-To-Log function:
+for instance, you can pass "foo > $myLogFile 2>&1" to MyCommand.
+
+.PARAMETER MyCommand
+The command that should be invoked.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+If runas.exe itself throws an error (because the requested command cannot be run with normal user privileges, say),
+an error is thrown.
+#>
 Function Invoke-Restricted() {
     param (
         [String] $MyCommand
@@ -27,7 +48,32 @@ Function Invoke-Restricted() {
     }
 }
 
-# Run a PS script with restricted privileges and wait for its execution to be completed
+<#
+.SYNOPSIS
+Run a PS script with normal user privileges.
+
+.DESCRIPTION
+Uses the Invoke-Restricted function to run a PS script with normal user privileges.
+Output can optionally be logged to a file, as normal output capturing won't work due to the fact the script will be run using runas.exe.
+You may use the Write-File-To-Log function to log the contents of the specified logfiles.
+To ensure that the invoked script behaves in the expected way, the exact same PowerShell executable that calls this function will be used.
+The module paths for the current session will also be used.
+
+.PARAMETER ScriptPath
+Path to the script that should be invoked, or a block of PS code to be run.
+
+.PARAMETER LogPath
+Optional path to a logfile to which output of the invoked script should be redirected.
+
+.PARAMETER ExecPolicy
+Optional ExecPolicy that should be used for running the script.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Invoke-Restricted-PS-Script() {
     param (
         [String] $Script,
@@ -47,6 +93,23 @@ Function Invoke-Restricted-PS-Script() {
     Invoke-Restricted $runCommand
 }
 
+<#
+.SYNOPSIS
+Copy an icon file from this repo to a shared location on the workspace.
+
+.DESCRIPTION
+Copy an icon file from this repo to a shared location on the workspace.
+
+.PARAMETER Name
+Filename of the icon. Expected to be under the $ICONDIR location in this repository.
+Will be installed to the $ICONDEST location on the workspace.
+
+.INPUTS
+None.
+
+.OUTPUTS
+Returns the location of the installed icon on the workspace.
+#>
 Function Install-Icon([String]$Name) {
     . {
         New-Item -ItemType Directory -Force -Path $ICONDEST
@@ -55,6 +118,28 @@ Function Install-Icon([String]$Name) {
     return "$ICONDEST\$Name.ico"
 }
 
+<#
+.SYNOPSIS
+Create a shortcut with an optional custom icon.
+
+.DESCRIPTION
+Create a shortcut with an optional custom icon.
+
+.PARAMETER Location
+Where the shortcut should be created.
+
+.PARAMETER Target
+Where the shortcut should link to.
+
+.PARAMETER IconName
+Name of the icon file to use for the shortcut. See the Install-Icon function.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function New-Shortcut() {
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -73,6 +158,25 @@ Function New-Shortcut() {
     }
 }
 
+<#
+.SYNOPSIS
+Log the contents of a file, line by line.
+
+.DESCRIPTION
+Log the contents of a file to ResearchCloud and to a logfile on the workspace.
+
+.PARAMETER LogPath
+The path to the file the contents of which should be logged
+
+.PARAMETER Prefix
+Prefix to be added to each line of the file when logging. Defaults to the filename of the log.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Write-File-To-Log {
     param (
         [String]$LogPath,
@@ -99,6 +203,25 @@ Function Write-File-To-Log {
     }
 }
 
+<#
+.SYNOPSIS
+Log text to ResearchCloud and to a logfile on the workspace.
+
+.DESCRIPTION
+Log text to ResearchCloud and to a logfile on the workspace.
+
+.PARAMETER LogText
+The String to be logged.
+
+.PARAMETER LogFile
+Where the log on the machine should be written to. Defaults to the value of the $LOGFILE global variable, which should be set by the component script.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Write-SRC-Log {
     param (
         [String]$LogText,
@@ -108,6 +231,25 @@ Function Write-SRC-Log {
     '{0:u}: {1}' -f (Get-Date), $LogText | Out-File $LogFile -Append
 }
 
+<#
+.SYNOPSIS
+Add a segment to the default path for Machine or User.
+
+.DESCRIPTION
+Add a segment to the default path for Machine or User.
+
+.PARAMETER NewSegment
+The location to add to the path.
+
+.PARAMETER Target
+The target scope of the path to change (e.g. 'Machine', 'User').
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Add-To-Path {
     param (
         [String] $NewSegment,
@@ -119,11 +261,40 @@ Function Add-To-Path {
         $Target)
 }
 
+<#
+.SYNOPSIS
+Resets the path for the current session to the default path for the machine and user.
+
+.DESCRIPTION
+Resets the path for the current session to the default path for the machine and user.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Update-Path {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
     Write-SRC-Log "Set PATH to $env:Path"
 }
 
+<#
+.SYNOPSIS
+Convert Unix-style line endings to Windows-style line endings in a file.
+
+.DESCRIPTION
+Convert Unix-style line endings to Windows-style line endings in a file.
+
+.PARAMETER File
+Path to the file to convert.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Convert-Newlines-LF([String] $File) {
     # Convert CRLF to LF
     # Add a trailing LF to the file
@@ -131,6 +302,25 @@ Function Convert-Newlines-LF([String] $File) {
     ((Get-Content $File) -join "`n") + "`n" | Set-Content -NoNewline $File
 }
 
+<#
+.SYNOPSIS
+Securely delete a file.
+
+.DESCRIPTION
+Uses the SDelete program (installed if not present) to delete a file in a way that does not allow it to be easily recovered.
+
+.PARAMETER Path
+Path of the file to delete.
+
+.PARAMETER InstallPath
+Path where SDelete should be installed, if it is not yet present.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function SecureDelete {
     param (
         [String] $Path,
@@ -160,8 +350,34 @@ Function SecureDelete {
     }
 }
 
-# Mount a remote share to $Drive using SSHFS
-# Assumes sshfs-ws and winfsp are already installed
+<#
+.SYNOPSIS
+Mount a remote share using SSHFS.
+
+.DESCRIPTION
+Mount a remote share using SSHFS. Assumes sshfs-ws and winfsp are already installed.
+
+.PARAMETER Server
+IP or hostname of server to connect to.
+
+.PARAMETER User
+Username to use to connect to server.
+
+.PARAMETER Path
+Port to connect to on the server.
+
+.PARAMETER Path
+Path to the SSHFS share on the server.
+
+.PARAMETER Drive
+Drive name to mount to (e.g. "D:").
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Mount-SSHFS {
     param (
         [String]$Server,
@@ -181,6 +397,26 @@ Function Mount-SSHFS {
     }
 }
 
+<#
+.SYNOPSIS
+Initialize parameters set by ResearchCloud as local variables.
+
+.DESCRIPTION
+Detect mandatory environment variables that should be set by ResearchCloud, creates local variables for each, and throws
+an error if one is not set.
+
+.PARAMETER ReqParams
+Array of Strings containing ResearchCloud parameter names.
+
+.PARAMETER Prefix
+Determines the name of the local variables that will be created. For instance, with Prefix 'foo' and parameter name 'bar', a variable 'foo_bar' will be created with the value of the 'bar' environment variable.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None. The function initializes a set of local variables.
+#>
 Function Initialize-SRC-Param {
     param (
         [String[]] $ReqParams,
