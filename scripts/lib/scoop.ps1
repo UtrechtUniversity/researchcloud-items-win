@@ -35,7 +35,7 @@ Function Install-Scoop-Package() {
     if ($RunAsAdmin) {
         scoop install $Pkg *> $scoopInstallLog
     } else {
-        Invoke-Restricted "cmd.exe /c scoop install $Pkg > $scoopInstallLog 2>&1"
+        Invoke-Restricted-PS-Script "scoop install $Pkg" -LogPath $scoopInstallLog
     }
     Write-File-To-Log $scoopInstallLog -Clear
     Update-Path

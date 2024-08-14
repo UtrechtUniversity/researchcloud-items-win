@@ -30,17 +30,21 @@ Function Invoke-Restricted() {
 # Run a PS script with restricted privileges and wait for its execution to be completed
 Function Invoke-Restricted-PS-Script() {
     param (
-        [String] $ScriptPath,
-        [String] $LogPath = ''
+        [String] $Script,
+        [String] $LogPath = '',
+        [String] $ExecPolicy = 'Bypass'
     )
 
     $pwshPath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName # Get the path to the .exe running this script, to ensure we call the same version of powershell with Invoke-Restricted.
-    $setModulePath = "`$env:PSModulePath='$env:PSModulePath'" # Ensure that pwsh in the 'runas' context loads the same modules as the shell executing this script
-    $runCommand = "$pwshPath -ExecutionPolicy Bypass -c $setModulePath; & `"$ScriptPath`""
+    # Ensure that pwsh in the 'runas' context has the same Path and ModulePath as the shell executing this script
+    $setModulePath = "`$env:PSModulePath='$env:PSModulePath'"
+    $setPath = "`$env:PATH='$env:PATH'"
+
+    $runCommand = "$pwshPath -ExecutionPolicy $ExecPolicy -c $setPath; $setModulePath; cd; & $Script"
     if ( $LogPath ) {
          $runCommand = "$runCommand *>> `"$LogPath`""
     }
-    Invoke-Restricted($runCommand)
+    Invoke-Restricted $runCommand
 }
 
 Function Install-Icon([String]$Name) {
