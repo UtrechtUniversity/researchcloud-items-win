@@ -23,8 +23,8 @@ Function Main {
     Write-SRC-Log "Start iBridges installation"
     try {
         Install-Scoop
-        Install-Scoop-Package "git"
-        Install-Scoop-Package "python@$PYTHON_VERSION"
+        Install-Scoop-Package "git" -RunAsAdmin
+        Install-Scoop-Package "python@$PYTHON_VERSION" -RunAsAdmin
         Install-Global-Pipx
         $pkgs = "ibridges", "ibridgesgui"
         foreach ($pkg in $pkgs) {
