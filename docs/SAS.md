@@ -4,10 +4,12 @@ Installs [SAS](https://www.sas.com/). Which SAS services, packages, and language
 
 ## Description
 
+- Installs [SSHFS-Win](https://github.com/winfsp/sshfs-win).
 - Copies the provided SSH key (see Parameters) to `~/.ssh/id_rsa` (for the `rsc` user).
-- Mounts an SSHFS share on the robotserver
-- Runs the SAS installer using the specified responsefile
-- Removes the SSH key securely using SDelete
+- Mounts an SSHFS share on the robotserver.
+- Runs the SAS installer using the specified responsefile.
+- Unounts the SSHFS share.
+- Removes the SSH key securely using SDelete.
 
 ### Responsefile
 
