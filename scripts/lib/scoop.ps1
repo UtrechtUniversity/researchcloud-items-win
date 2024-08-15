@@ -53,6 +53,11 @@ Function Install-Scoop-Bucket() {
     param (
         [String] $Bucket
     )
+
+    if (!(Get-Command "git" -errorAction SilentlyContinue)) {
+        Install-Scoop-Package "git" -RunAsAdmin
+    }
+
     Write-SRC-Log ("Installing scoop bucket {0}" -f $Bucket)
     scoop bucket add $Bucket
 }
