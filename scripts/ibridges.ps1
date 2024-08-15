@@ -24,7 +24,7 @@ Function Main {
     try {
         Install-Scoop
         Install-Scoop-Package "git" -RunAsAdmin
-        Install-Scoop-Package "python@$PYTHON_VERSION" -RunAsAdmin
+        Install-Scoop-Package "python@$PYTHON_VERSION" -Global
         Install-Global-Pipx
         $pkgs = "ibridges", "ibridgesgui"
         foreach ($pkg in $pkgs) {
