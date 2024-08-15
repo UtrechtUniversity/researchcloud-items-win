@@ -4,6 +4,63 @@ $ICONDEST = "C:\src-misc\icons"
 
 <#
 .SYNOPSIS
+Set permissions for a directory.
+
+.DESCRIPTION
+Set permissions for a directory, and optionally its children.
+
+.PARAMETER DirPath
+Path to the directory.
+
+.PARAMETER Group
+Group for which the new permissions should be set (default: "everyone").
+
+.PARAMETER Permission
+The permission to be allowed or denied (default: "Read").
+
+.PARAMETER Allow
+Whether to allow or deny the specified permission for the group (default: "Allow").
+
+.PARAMETER NoOverride
+By default, this function will override any Acl rules the folder inherits from its parents. This switch disables that behavior.
+
+.PARAMETER Recursive
+Whether to make subfolders and subitems inherit the permission.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+If runas.exe itself throws an error (because the requested command cannot be run with normal user privileges, say),
+an error is thrown.
+#>
+function Set-Dir-Access() {
+    param (
+        [String] $DirPath,
+        [String] $Group = 'everyone',
+        [String] $Permission = 'Read',
+        [String] $Allow = 'Allow',
+        [Switch] $NoOverride,
+        [Switch] $Recursive
+    )
+    $Acl = Get-ACL $DirPath
+    if (!$NoOverride){
+         $Acl.SetAccessRuleProtection($true, $false)
+    }
+    if ($Recursive) {
+        $Inheritance = 3
+    } else {
+        $Inheritance = 0
+    }
+    $Propagation = 0
+    $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule($Group, $Permission, $Inheritance, $Propagation, $Allow)
+    $Acl.AddAccessRule($AccessRule)
+    Set-Acl $DirPath $Acl
+}
+
+<#
+.SYNOPSIS
 Run a command with normal user privileges.
 
 .DESCRIPTION
