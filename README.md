@@ -12,7 +12,7 @@ See [here](https://utrechtuniversity.github.io/researchcloud-items/) for general
 
 The `docs` directory contains documentation for the installation scripts in the `scripts` directory.
 
-`scripts/lib` is a set of modules that can be included in each scripts.
+`scripts/lib` is a set of general scripts containing functions that can be included in each scripts. Documentation for these is inline.
 
 ## CI
 
