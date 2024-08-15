@@ -24,19 +24,27 @@ Function Install-Scoop {
     }
 }
 
-Function Install-Scoop-Package() {
+ Function Install-Scoop-Package() {
     param (
         [String] $Pkg,
-        [Switch] $RunAsAdmin
+        [Switch] $RunAsAdmin,
+        [Switch] $Global
     )
     Write-SRC-Log ("Installing {0} via scoop" -f $Pkg)
-
     $scoopInstallLog = "$env:USERPROFILE\scoop_installer.log"
-    if ($RunAsAdmin) {
-        scoop install $Pkg *> $scoopInstallLog
-    } else {
-        Invoke-Restricted-PS-Script "scoop install $Pkg" -LogPath $scoopInstallLog
+
+    $cmdArgs = @('install', $Pkg)
+
+    if ($Global) {
+        $cmdArgs += '--global'
     }
+
+    if ($RunAsAdmin -or $Global) {
+        & scoop @cmdArgs *> $scoopInstallLog
+    } else {
+        Invoke-Restricted-PS-Script "scoop install $cmdArgs"
+    }
+
     Write-File-To-Log $scoopInstallLog -Clear
     Update-Path
 }
