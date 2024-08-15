@@ -80,7 +80,7 @@ Function Install-Scoop-Package() {
     if ($RunAsAdmin -or $Global) {
         & scoop @cmdArgs *> $scoopInstallLog
     } else {
-        Invoke-Restricted-PS-Script "scoop install $cmdArgs"
+         Invoke-Restricted-PS-Script "scoop $cmdArgs" -LogPath $scoopInstallLog
     }
 
     Write-File-To-Log $scoopInstallLog -Clear
