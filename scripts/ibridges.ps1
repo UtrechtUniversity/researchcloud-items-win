@@ -27,11 +27,13 @@ Function Main {
         Install-Scoop-Package "python@$PYTHON_VERSION" -Global
         Install-Global-Pipx
         $pkgs = "ibridges", "ibridgesgui"
+        $pipLog = "$env:USERPROFILE\pip_ibridges_servers.log"
         foreach ($pkg in $pkgs) {
             Write-SRC-Log "Installing $pkg"
             pipx install $pkg *>> $LOGFILE
             $targetVenv = "$GLOBAL_PIPX_HOME\venvs\$pkg\Lib\site-packages"
-            python3 -m pip install --target "$targetVenv" "$IBRIDGES_TEMPLATE_PLUGIN"
+            Invoke-Restricted-PS-Script "python3 -m pip install --target $targetVenv $IBRIDGES_TEMPLATE_PLUGIN" -LogPath $pipLog
+            Write-File-To-Log $pipLog -Clear
         }
         foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
           $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
