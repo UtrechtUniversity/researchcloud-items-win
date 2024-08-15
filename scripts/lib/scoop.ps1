@@ -1,5 +1,19 @@
 . $PSScriptRoot\common.ps1
 
+<#
+.SYNOPSIS
+Install Scoop.
+
+.DESCRIPTION
+Install Scoop, using Invoke-Restricted to run the downloaded install script with normal-user privileges.
+Scoop will be installed to ~\scoop, and ~\scoop\shims will be added to the path.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Install-Scoop {
     if (Get-Command "scoop" -errorAction SilentlyContinue) {
         Write-SRC-Log "Scoop already installed"
@@ -24,7 +38,31 @@ Function Install-Scoop {
     }
 }
 
- Function Install-Scoop-Package() {
+<#
+.SYNOPSIS
+Install a package using scoop.
+
+.DESCRIPTION
+Uses scoop to install a package. By default, it will attempt to install with normal-user privileges (CURRENTLY BROKEN),
+but optionally you may force installation with admin privileges.
+You can also specify whether the package should be installed globally (requires admin privileges).
+
+.PARAMETER Pkg
+Name of the package that should be installed. Can include version (e.g. 'python@3.12.15').
+
+.PARAMETER RunAsAdmin
+Force installation with admin privileges (that is, running scoop with the privileges of the ResearchCloud install script).
+
+.PARAMETER Global
+Whether to install the package globally, instead of for the current user only. Implies -RunAsAdmin.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
+Function Install-Scoop-Package() {
     param (
         [String] $Pkg,
         [Switch] $RunAsAdmin,
@@ -49,6 +87,22 @@ Function Install-Scoop {
     Update-Path
 }
 
+<#
+.SYNOPSIS
+Install a scoop bucket.
+
+.DESCRIPTION
+Install a scoop bucket (that is, an additional package repo). Will install git (via scoop) if it is not present.
+
+.PARAMETER Bucket
+Name of the bucket that must be installed.
+
+.INPUTS
+None.
+
+.OUTPUTS
+None.
+#>
 Function Install-Scoop-Bucket() {
     param (
         [String] $Bucket
