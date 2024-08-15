@@ -17,6 +17,15 @@ A responsefile is an installation configuration file obtained by running the SAS
 
 Reponsefiles should be placed in the root of the SAS Software Depot on the Robot Server.
 
+To create a responsefile for a new configuration:
+
+1. Mount the robotserver SSHFS share (you can use the functions from the component script to do so, or do so manually)
+1. Run `setup.exe -record -responsefile "C:\path\to\newresponsefile.properties"`
+    * `setup.exe` should be in the root of the [Software Depot](#software-depot).
+    * It should also be possible to do this with `setup.sh` on Ubuntu, although this will likely generate Unix-style rather than Windows-style filepaths in the responsefile.
+  
+See [here](https://go.documentation.sas.com/doc/en/bicdc/9.4/biig/n05023intelplatform00install.htm) for more information.
+
 ### Software Depot
 
 The SAS installation directory on the robot server is called a SAS Software Depot. It is created by following the instructions [here](https://go.documentation.sas.com/doc/en/bicdc/9.4/biig/n03001intelplatform00install.htm). We first created a Software Depot on a different workspace and then used this a source to install to the robotserver. This 'two stage' solution is required because the SAS Download Manager is required to obtain the initial software installation, but it requires a GUI, which is not available on the robotserver.
