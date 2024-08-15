@@ -5,6 +5,7 @@ $PYTHON_VERSION = "3.12.5"
 $GLOBAL_PIPX_HOME = "c:\pipx"
 $GLOBAL_PIPX_BIN = "c:\pipx\bin"
 $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-servers-uu.git"
+$IBRIDGES_TEMPLATE_DIR = "ibridgescontrib"
 
 . $PSScriptRoot\lib\common.ps1
 . $PSScriptRoot\lib\scoop.ps1
@@ -26,14 +27,13 @@ Function Main {
         Install-Scoop-Package "git" -RunAsAdmin
         Install-Scoop-Package "python@$PYTHON_VERSION" -Global
         Install-Global-Pipx
-        $pkgs = "ibridges", "ibridgesgui"
-        $pipLog = "$env:USERPROFILE\pip_ibridges_servers.log"
+        $pkgs = "ibridgesgui"
         foreach ($pkg in $pkgs) {
             Write-SRC-Log "Installing $pkg"
             pipx install $pkg *>> $LOGFILE
             $targetVenv = "$GLOBAL_PIPX_HOME\venvs\$pkg\Lib\site-packages"
-            Invoke-Restricted-PS-Script "python3 -m pip install --target $targetVenv $IBRIDGES_TEMPLATE_PLUGIN" -LogPath $pipLog
-            Write-File-To-Log $pipLog -Clear
+            python3 -m pip install --target $targetVenv $IBRIDGES_TEMPLATE_PLUGIN
+            Set-Dir-Access "$targetVenv\$IBRIDGES_TEMPLATE_DIR" -Permission 'ReadAndExecute' -Group 'everyone' -Recursive
         }
         foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
           $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
