@@ -27,14 +27,17 @@ Function Main {
         Install-Scoop-Package "git" -RunAsAdmin
         Install-Scoop-Package "python@$PYTHON_VERSION" -Global
         Install-Global-Pipx
-        $pkgs = "ibridgesgui"
-        foreach ($pkg in $pkgs) {
-            Write-SRC-Log "Installing $pkg"
-            pipx install $pkg *>> $LOGFILE
-            $targetVenv = "$GLOBAL_PIPX_HOME\venvs\$pkg\Lib\site-packages"
-            python3 -m pip install --target $targetVenv $IBRIDGES_TEMPLATE_PLUGIN
-            Set-Dir-Access "$targetVenv\$IBRIDGES_TEMPLATE_DIR" -Permission 'ReadAndExecute' -Group 'everyone' -Recursive
-        }
+
+        Write-SRC-Log "Installing ibridgesgui"
+        pipx install ibridgesgui *>> $LOGFILE
+        $targetVenv = "$GLOBAL_PIPX_HOME\venvs\ibridgesgui"
+        # Add shortcut to ibridges CLI to global pipx bin
+        New-Item -Path "$GLOBAL_PIPX_BIN\ibridges.exe" -ItemType SymbolicLink -Value "$targetVenv\Scripts\ibridges.exe"
+
+        # Install ibridges template plugin
+        python3 -m pip install --target "$targetVenv\Lib\site-packages" $IBRIDGES_TEMPLATE_PLUGIN
+        Set-Dir-Access "$targetVenv\Lib\site-packages\$IBRIDGES_TEMPLATE_DIR" -Permission 'ReadAndExecute' -Group 'everyone' -Recursive
+
         foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
           $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
           New-Shortcut -Location $shortcutLocation -Target "$GLOBAL_PIPX_BIN\ibridges-gui.exe" -IconName 'ibridges'
