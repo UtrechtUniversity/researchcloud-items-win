@@ -5,7 +5,7 @@ $PYTHON_VERSION = "3.12.5"
 $GLOBAL_PIPX_HOME = "c:\pipx"
 $GLOBAL_PIPX_BIN = "c:\pipx\bin"
 $IBRIDGES_TEMPLATE_PLUGIN = "git+https://github.com/UtrechtUniversity/ibridges-servers-uu.git"
-$IBRIDGES_TEMPLATE_DIR = "ibridgescontrib"
+$IBRIDGES_CONTRIB_DIR = "ibridgescontrib"
 
 . $PSScriptRoot\lib\common.ps1
 . $PSScriptRoot\lib\scoop.ps1
@@ -31,12 +31,17 @@ Function Main {
         Write-SRC-Log "Installing ibridgesgui"
         pipx install ibridgesgui *>> $LOGFILE
         $targetVenv = "$GLOBAL_PIPX_HOME\venvs\ibridgesgui"
+        $venvPackages = "$targetVenv\Lib\site-packages"
+
         # Add shortcut to ibridges CLI to global pipx bin
         New-Item -Path "$GLOBAL_PIPX_BIN\ibridges.exe" -ItemType SymbolicLink -Value "$targetVenv\Scripts\ibridges.exe"
 
         # Install ibridges template plugin
         python3 -m pip install --target "$targetVenv\Lib\site-packages" $IBRIDGES_TEMPLATE_PLUGIN
-        Set-Dir-Access "$targetVenv\Lib\site-packages\$IBRIDGES_TEMPLATE_DIR" -Permission 'ReadAndExecute' -Group 'everyone' -Recursive
+        $serverTemplateDir = Get-ChildItem -Path $venvPackages -Filter "ibridges_servers*" -Name
+        foreach ($dir in $serverTemplateDir, $IBRIDGES_CONTRIB_DIR) {
+            Set-Dir-Access "$venvPackages\$dir" -Permission 'ReadAndExecute' -Group 'everyone' -Recursive
+        }
 
         foreach ($location in 'CommonDesktopDirectory', 'CommonPrograms') {
           $shortcutLocation = Join-Path ([Environment]::GetFolderPath($location)) -ChildPath 'iBridges.lnk'
