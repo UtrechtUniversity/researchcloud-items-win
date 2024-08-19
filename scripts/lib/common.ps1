@@ -293,7 +293,7 @@ Function Write-SRC-Log {
 Add a segment to the default path for Machine or User.
 
 .DESCRIPTION
-Add a segment to the default path for Machine or User.
+Add a segment to the default path for Machine or User, if the segment does not exist yet for the target.
 
 .PARAMETER NewSegment
 The location to add to the path.
@@ -312,10 +312,13 @@ Function Add-To-Path {
         [String] $NewSegment,
         [String] $Target = 'Machine'
     )
-    [Environment]::SetEnvironmentVariable(
-        "Path",
-        [Environment]::GetEnvironmentVariable("Path", $Target) + ";$NewSegment",
-        $Target)
+    $curPath = [Environment]::GetEnvironmentVariable("Path", $Target)
+    if (!($NewSegment -in ($curPath -split ';')) ) {
+        [Environment]::SetEnvironmentVariable(
+            "Path",
+            $curPath + ";$NewSegment",
+            $Target)
+    }
 }
 
 <#
