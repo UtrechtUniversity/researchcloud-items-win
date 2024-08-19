@@ -335,7 +335,9 @@ None.
 None.
 #>
 Function Update-Path {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    $machinePath = [System.Environment]::GetEnvironmentVariable("Path","Machine") -split ';'
+    $userPath = [System.Environment]::GetEnvironmentVariable("Path","User") -split ';'
+    $env:Path = ($machinePath + $userPath | Select-Object -Unique) -join ';'
     Write-SRC-Log "Set PATH to $env:Path"
 }
 
