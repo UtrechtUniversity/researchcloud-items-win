@@ -4,7 +4,7 @@ $LOGFILE = "c:\logs\ibridges.log"
 $PYTHON_VERSION = "3.12.5"
 $GLOBAL_PIPX_HOME = "c:\pipx"
 $GLOBAL_PIPX_BIN = "c:\pipx\bin"
-$IBRIDGES_TEMPLATE_PLUGIN = "git+ibridges-servers-uu"
+$IBRIDGES_TEMPLATE_PLUGIN = "ibridges-servers-uu"
 $IBRIDGES_CONTRIB_DIR = "ibridgescontrib"
 
 . $PSScriptRoot\lib\common.ps1
